@@ -3,7 +3,7 @@
 @Description: APDS9301 sensor function  
 @Author		: Deepesh Sonigra 
 @Author		: Madhumitha Tolakanahalli
-@Date		: 03/22/2019
+@Date		: 03/17/2019
 */
 #include"driver_i2c.h"
 
