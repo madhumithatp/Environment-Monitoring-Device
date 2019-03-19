@@ -35,6 +35,27 @@ void* light_task(void *arg)
 {
 		
 	
+	int count = 0;
+	light res;
+	printf("Light Task Entered\n");
+	float light2;
+	if(apds9301_power_on()!= ERROR)
+	{
+		if(apds9301_setup() != ERROR)
+		{
+			while(count < 10)
+			{
+				light2 = getLuminosity();
+			//	printf("Light is %f\n",light2);
+				count++;
+			}
+			res = is_Day_or_Night();	
+			if(res == NIGHT)
+				printf("Night\n");
+			else
+				printf("Day\n");
+		}	
+	}
 
 
 }
