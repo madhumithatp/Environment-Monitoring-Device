@@ -1,5 +1,5 @@
 /*
-@File Name	: myI2C.h
+@File Name	: printtime.c
 @Description: time functions to get time  
 @Author		: Deepesh Sonigra 
 @Author		: Madhumitha Tolakanahalli

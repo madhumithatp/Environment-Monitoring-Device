@@ -18,7 +18,6 @@ typedef struct
 
 void* temp_task(void *arg)
 {
-	
 	int count = 0;
 	printf("Temp Task Entered\n");
 	

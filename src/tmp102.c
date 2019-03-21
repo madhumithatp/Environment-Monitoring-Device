@@ -39,7 +39,7 @@ int tmp102_open()
 /*
 @description: close a file descriptor to I2C bus
 @praram		: file descriptor 
-@return 	: in type (SUCCESS or FAILURE)
+@return 	: int type (SUCCESS or FAILURE)
 */
 int tmp102_close(int fd)
 {
@@ -53,7 +53,7 @@ int tmp102_close(int fd)
 
 /*
 @description: write value to register
-@praram		:addr of register and value
+@praram		: addr of register and value
 @return 	: SUCCESS or ERROR
 */
 
