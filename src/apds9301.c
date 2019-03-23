@@ -35,7 +35,7 @@ int fd;
 
 /*
 @description: close a file descriptor to I2C bus
-@praram		: file descriptor 
+@param		: file descriptor 
 @return 	: in type (SUCCESS or FAILURE)
 */
 int apds9301_close(int fd)
@@ -49,7 +49,7 @@ int apds9301_close(int fd)
 }
 /*
 @description: Initialize the sensor
-@praram		:
+@param		:
 @return 	: SUCCESS or ERROR
 */
 return_status apds9301_setup()
@@ -68,7 +68,7 @@ return_status apds9301_setup()
 
 /*
 @description: power on the sensor
-@praram		:
+@param		:
 @return 	: SUCCESS or ERROR
 */
 
@@ -86,7 +86,7 @@ return_status apds9301_power_on()
 
 /*
 @description: write value to register
-@praram		:addr of register and value
+@param		:addr of register and value
 @return 	: SUCCESS or ERROR
 */
 
@@ -113,7 +113,7 @@ return_status apds9301_write_reg(uint8_t addr, uint8_t value)
 
 /*
 @description: read register of TMP102
-@praram		: address of register
+@param		: address of register
 @return 	: uint16_t Buffer containing reg value
 */
 uint8_t apds9301_read_reg_1byte(uint8_t addr)
@@ -143,7 +143,7 @@ uint8_t apds9301_read_reg_1byte(uint8_t addr)
 
 /*
 @description: read register of TMP102
-@praram		: address of register
+@param		: address of register
 @return 	: uint16_t Buffer containing reg value
 */
 uint16_t apds9301_read_reg_2byte(uint8_t addr)
@@ -173,7 +173,7 @@ uint16_t apds9301_read_reg_2byte(uint8_t addr)
 
 /*
 @description: get lux
-@praram		: 
+@param		: 
 @return 	: lux
 */
 float getLuminosity()
@@ -221,7 +221,7 @@ float getLuminosity()
 
 /*
 @description: decide day or night based on lux
-@praram		: 
+@param		: 
 @return 	: day or night
 */
 light is_Day_or_Night()
@@ -235,7 +235,7 @@ light is_Day_or_Night()
 
 /*
 @description: align data in format 
-@praram		: addr and value
+@param		: addr and value
 @return 	: aligned data
 */
 

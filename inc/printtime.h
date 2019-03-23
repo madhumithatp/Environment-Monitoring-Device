@@ -1,10 +1,13 @@
 /*
-@File Name	: myI2C.h
+@File Name	: printtime.h
 @Description: time functions to get time  
 @Author		: Deepesh Sonigra 
 @Author		: Madhumitha Tolakanahalli
 @Date		: 03/22/2019
 */
+
+#ifndef PRINTTIME_H_
+#define PRINTTIME_H_`
 
 #include <sys/time.h>
 #include<stddef.h>
@@ -18,3 +21,5 @@ double getTime();
 @return 	: double , current time 
 */
 
+
+#endif /* PRINTTIME_H_ */

@@ -16,49 +16,6 @@ typedef struct
 	char *FileName;
 }StructThread;
 
-void* temp_task(void *arg)
-{
-	int count = 0;
-	printf("Temp Task Entered\n");
-	
-	float temperature;
-	while(count < 10)
-	{
-		temperature = getTemperature(CELCIUS);
-		printf("Temperature is %f\n",temperature);
-		count++;
-	}
-
-}
-void* light_task(void *arg)
-{
-		
-	
-	int count = 0;
-	light res;
-	printf("Light Task Entered\n");
-	float light2;
-	if(apds9301_power_on()!= ERROR)
-	{
-		if(apds9301_setup() != ERROR)
-		{
-			while(count < 10)
-			{
-				light2 = getLuminosity();
-			//	printf("Light is %f\n",light2);
-				count++;
-			}
-			res = is_Day_or_Night();	
-			if(res == NIGHT)
-				printf("Night\n");
-			else
-				printf("Day\n");
-		}	
-	}
-
-
-}
-
 int main(int argc, char **argv)
 {
 	StructThread MyThreads[2];
@@ -71,7 +28,7 @@ int main(int argc, char **argv)
 	for(int i =0; i<2;i++)
 		MyThreads[i].FileName = argv[1];
 
-	 status= pthread_create(&threads1,NULL,temp_task,(void *)&(MyThreads[0]));
+	 status= pthread_create(&threads1,NULL,temperature_task,(void *)&(MyThreads[0]));
 	 if(status)
 	 {
 	 	perror("Temp Task not created Error code ");

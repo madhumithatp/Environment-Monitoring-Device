@@ -1,10 +1,18 @@
-/*
-@File Name	: apds9301.h
-@Description: APDS9301 sensor function  
-@Author		: Deepesh Sonigra 
-@Author		: Madhumitha Tolakanahalli
-@Date		: 03/17/2019
-*/
+/**
+ * @file apds9301.h
+ * @author Deepesh Sonigra
+ *         Madhumitha Tolakanahalli
+ * @brief APDS9301 sensor function
+ * @version 0.1
+ * @date 2019-03-21
+ * 
+ * @copyright Copyright (c) 2019
+ * 
+ */
+
+#ifndef APDS9301_H_
+#define APDS9301_H_
+
 #include"driver_i2c.h"
 
 
@@ -122,3 +130,5 @@ light is_Day_or_Night();
 
 uint16_t apds9301_data_align(uint8_t addr,uint8_t value);
 
+
+#endif /* APDS9301_H_ */

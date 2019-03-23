@@ -8,8 +8,8 @@
 */
 
 
-#ifndef I2C_DRIVER
-#define I2C_DRIVER
+#ifndef I2C_DRIVER_H_
+#define I2C_DRIVER_H_
 
 #include<fcntl.h>
 #include<linux/i2c-dev.h>

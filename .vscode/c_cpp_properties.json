@@ -4,7 +4,8 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
-                "${workspaceFolder}/inc"
+                "${workspaceFolder}/inc",
+                "/home/madhumitha/AESD/P01/Environment-Monitoring-Device/inc"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",

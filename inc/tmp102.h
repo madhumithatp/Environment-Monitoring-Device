@@ -7,6 +7,9 @@
 @citation	: https://elinux.org/Interfacing_with_I2C_Devices
 */
 
+#ifndef TMP102_H_
+#define TMP102_H_
+
 #include "driver_i2c.h"
  
 
@@ -102,3 +105,5 @@ float getTemperature(unit_temp unit);
 
 
 
+
+#endif /* TMP102_H_ */

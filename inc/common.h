@@ -10,9 +10,22 @@
  * 
  */
 
-#include <mqueue.h>
+#ifndef COMMON_H_
+#define COMMON_H_
 
-typedef enum
+#include <mqueue.h>
+#include"logger_task.h"
+
+typedef enum 
+{
+    MSGTYPE_SENSOR_DATA = 1,
+    MSGTYPE_SENSOR_STATUS = 2,
+    MSGTYPE_EXIT = 3,
+
+}MsgType_t;
+
+
+typedef enum 
 {
     TID_MAIN = 1,
     TID_LOGGER = 2,
@@ -22,16 +35,42 @@ typedef enum
 
 }TID_t;
 
-typedef enum
-{
-    MSGTYPE_SENSOR_DATA,
-    MSGTYPE_SENSOR_STATUS,
-    MSGTYPE_EXIT,
 
-}MsgType_t;
 
-typedef union
+typedef struct 
 {
-    LightPacket_t lightpacket;
-    TemperaturePacket_t temperaturepacket;
+    MsgType_t msg_type;
+    TID_t ID;
+    float temperature;
+
+}TemperaturePacket_t;
+
+typedef struct 
+{
+    MsgType_t msg_type;
+    TID_t ID;
+    float lux;
+
+} LightPacket_t;
+
+typedef struct 
+{
+    TID_t ID;
+    union
+    {
+        LightPacket_t lightpacket;
+        TemperaturePacket_t temperaturepacket;
+
+    };
+    
 }Packet;
+
+/**
+ * @brief  Function to log packets
+ * 
+ * @param packet_log 
+ * @return int 
+ */
+int log_packet(Packet ** packet_log);
+
+#endif /* COMMON_H_ */
