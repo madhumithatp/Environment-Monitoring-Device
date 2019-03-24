@@ -22,5 +22,17 @@
 
 mqd_t mq_log;
 
+/**
+ * @brief Initilaize arrtibutes for message queue
+ * 
+ * @return mqd_t 
+ */
+mqd_t log_task_mq_init();
 
+/**
+ * @brief Callback for logger thread
+ * 
+ * @return void* 
+ */
+void * logger_task();
 #endif /* LOGGER_TASK_H_ */

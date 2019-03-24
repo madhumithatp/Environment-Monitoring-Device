@@ -71,6 +71,6 @@ typedef struct
  * @param packet_log 
  * @return int 
  */
-int log_packet(Packet ** packet_log);
+int log_packet(Packet packet_log);
 
 #endif /* COMMON_H_ */

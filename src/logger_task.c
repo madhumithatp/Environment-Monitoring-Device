@@ -14,6 +14,7 @@
 
 mqd_t log_task_mq_init()
 {   
+    printf("Logger Task Init \n");
     mqd_t ret_mq;
     struct mq_attr log_mqattr;
     log_mqattr.mq_msgsize = sizeof(Packet);
@@ -21,12 +22,12 @@ mqd_t log_task_mq_init()
     log_mqattr.mq_flags = 0;
 
     mq_unlink(MQ_LOG);
-    ret_mq = mq_open(MQ_LOG,O_CREAT | O_RDWR, 0666, log_mqattr);
+    ret_mq = mq_open(MQ_LOG,O_CREAT | O_RDWR, 0666, &log_mqattr);
 
     return ret_mq;
 }
 
-void logger_task()
+void * logger_task()
 {
     FILE * logfptr = fopen(Filename, "w");
     fprintf(logfptr, "Logger Task Begin \n");
@@ -42,22 +43,32 @@ void logger_task()
     while(1)
     {
         logfptr = fopen(Filename, "a");
-        mq_receive(mq_log, (char * )&LogData, sizeof(LogData),0);
-
+        if(mq_receive(mq_log,(char * )&LogData,sizeof(LogData),NULL) == -1)
+        {
+            perror("Logger Queue Receive Error \n");
+        }
+        printf("Logger ID %d \n",LogData.ID);
         switch(LogData.ID)
         {
             case TID_TEMPERATURE:
             {
+                printf(" [%lu] Temperature : %0.3f C \n", getTime(), LogData.temperaturepacket.temperature);
                 fprintf(logfptr, " [%lf] Temperature : %0.3f C \n", getTime(), LogData.temperaturepacket.temperature);
             } break;
             case TID_LIGHT:
             {
+                printf(" [%lu] Luminosity : %0.3f \n", getTime(), LogData.lightpacket.lux);
+                fprintf(logfptr, " [%lf] Luminosity : %0.3f \n", getTime(), LogData.lightpacket.lux);
+            } break;
+            default:
+            {
+                printf(" [%lf] Luminosity : %0.3f \n", getTime(), LogData.lightpacket.lux);
                 fprintf(logfptr, " [%lf] Luminosity : %0.3f \n", getTime(), LogData.lightpacket.lux);
             } break;
         }
         fclose(logfptr);
     }
-
+    
     mq_close(mq_log);
 
 }

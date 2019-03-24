@@ -13,13 +13,12 @@
 #ifndef MAIN_H_
 #define MAIN_H_
 
-#include<pthread.h>
-#include<time.h>
-#include"tmp102.h"
-#include"apds9301.h"
-#include"printtime.h"
+#include <pthread.h>
+#include <time.h>
+#include "printtime.h"
 #include "light_task.h"
 #include "temperature_task.h"
+#include "logger_task.h"
 #include "common.h"
 
 

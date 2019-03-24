@@ -30,23 +30,25 @@ mqd_t light_task_mq_init()
     return ret_mq;
 }
 
- void light_task_packet_create(Packet **packet_pc, MsgType_t msg_type, float lux)
+Packet light_task_packet_create(MsgType_t msg_type, float lux)
 {
-     Packet *packet_c = malloc(sizeof(Packet));
-    packet_c->lightpacket.msg_type = msg_type;
-    packet_c->ID                              = TID_LIGHT;
-    packet_c->lightpacket.lux      = lux;
-    *packet_pc = packet_c;
+    Packet packet_c;
+    packet_c.lightpacket.msg_type = msg_type;
+    packet_c.ID                   = 3;
+    packet_c.lightpacket.lux      = lux;
+    printf("Light Task Create : Structure polluted \n");
+    return packet_c;
 }
 
-void light_task_timer_handler(Packet **packet_tm)
+void light_task_timer_handler()
 {
     float lux;
     lux = getLuminosity();
-    Packet *packet_c = malloc(sizeof(Packet));
-    light_task_packet_create(&packet_tm, MSGTYPE_SENSOR_DATA,lux);
-    *packet_tm = packet_c;
-    log_packet(&packet_tm);
+    Packet packet_temp;
+    packet_temp= light_task_packet_create(MSGTYPE_SENSOR_DATA,lux);
+    printf("packet_create ID : %d \t lux : %f \t \n",packet_temp.ID,packet_temp.lightpacket.lux);
+    log_packet(packet_temp);
+    usleep(5000);
 }
 
 void* light_task()
@@ -57,7 +59,7 @@ void* light_task()
 	//light res;
 	printf("Light Task Entered\n");
 	float light2;
-     mq_light = light_task_mq_init();
+    mq_light = light_task_mq_init();
 	if(apds9301_power_on()!= ERROR)
 	{
 		if(apds9301_setup() != ERROR)

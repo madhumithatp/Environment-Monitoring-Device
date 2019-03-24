@@ -11,11 +11,12 @@
 
 #include <sys/time.h>
 #include<stddef.h>
+#include<time.h>
 
 #define USEC_TO_MSEC(x) 	(x /= (1000000))
 
 
-double getTime();
+unsigned long getTime();
 	/*
 @description: prints current time in secs 
 @return 	: double , current time 

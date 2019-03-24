@@ -32,8 +32,8 @@ mqd_t temperature_task_mq_init();
  * @brief populates Temperature Structure
  * 
  */
-void temperature_task_packet_create( Packet** packet_pc, MsgType_t msgtype, float temp);
-void temperature_task_timer_handler( Packet** packet_data);
+Packet temperature_task_packet_create( MsgType_t msgtype, float temp);
+void temperature_task_timer_handler();
 void* temperature_task();
 
 

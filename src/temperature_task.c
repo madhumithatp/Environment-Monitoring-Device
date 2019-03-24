@@ -25,27 +25,27 @@ mqd_t temperature_task_mq_init()
     return ret_mq;
 }
 
-void temperature_task_packet_create(Packet** packet_pc, MsgType_t msgtype, float temp)
+Packet temperature_task_packet_create(MsgType_t msgtype, float temp)
 {
-    Packet *packet_c = malloc(sizeof(Packet));
-    packet_c->temperaturepacket.msg_type    = msgtype;
-    packet_c->ID                            = TID_TEMPERATURE;
-    packet_c->temperaturepacket.temperature = temp;
-    *packet_pc = packet_c;
+    Packet packet_c;
+    packet_c.temperaturepacket.msg_type    = msgtype;
+    packet_c.ID                            = TID_TEMPERATURE;
+    packet_c.temperaturepacket.temperature = temp;
+    return packet_c;
 }
 
 
 
 
-void temperature_task_timer_handler(Packet** packet_data)
+void temperature_task_timer_handler()
 {
 
     float temperature;
     temperature = getTemperature(CELCIUS);
-    Packet *packet_c = malloc(sizeof(Packet));
-    temperature_task_packet_create(&packet_c,MSGTYPE_SENSOR_DATA,temperature);
-    *packet_data = packet_c;
-    log_packet(&packet_data);
+    Packet packet_c;
+    packet_c= temperature_task_packet_create(MSGTYPE_SENSOR_DATA,temperature);
+    
+    log_packet(packet_c);
 
 }
 
@@ -56,13 +56,13 @@ void* temperature_task()
 	int count = 0;
 	printf("Temp Task Entered\n");
     mq_temperature=temperature_task_mq_init();
-	// float temperature;
+	float temperature;
      
-	// while(count < 10)
-	// {
-    //     temperature_task_timer_handler(&packet_temp);
-    //     usleep(500);
-	// 	count++;
-	// }
+	 while(count < 10)
+	 {
+         temperature_task_timer_handler(&packet_temp);
+         usleep(500);
+	 	count++;
+	 }
 
 }
