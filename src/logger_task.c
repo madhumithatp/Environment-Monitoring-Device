@@ -11,6 +11,7 @@
  */
 
 #include "logger_task.h"
+#include "driver_i2c.h"
 
 mqd_t log_task_mq_init()
 {   
@@ -30,16 +31,13 @@ mqd_t log_task_mq_init()
 void * logger_task()
 {
     FILE * logfptr = fopen(Filename, "w");
-    fprintf(logfptr, "Logger Task Begin \n");
+    fprintf(logfptr, "[%lf]\t[Status]\tLogger Task Created Successfully\n",getTime());
     fclose(logfptr);
 
     Packet LogData;
-    printf("Logger Task Entered \n");
-
     mq_log = log_task_mq_init();
 
     memset(&LogData, 0, sizeof(Packet));
-
     while(1)
     {
         logfptr = fopen(Filename, "a");
@@ -51,20 +49,28 @@ void * logger_task()
         switch(LogData.ID)
         {
             case TID_TEMPERATURE:
-            {
-                printf(" [%lu] Temperature : %0.3f C \n", getTime(), LogData.temperaturepacket.temperature);
-                fprintf(logfptr, " [%lf] Temperature : %0.3f C \n", getTime(), LogData.temperaturepacket.temperature);
-            } break;
+            
+                if(LogData.msg_type == MSGTYPE_DATA)
+                    fprintf(logfptr, " [%lf]\t[%s]\t[Temperature]\tCurrent Temperature : %0.3f DegC \n", getTime(), LogData.msg_type, LogData.temperaturepacket.temperature);
+                else
+                    fprintf(logfptr,"[%lf]\t[%s]\t %s",getTime(),LogData.msg_type,LogData.messagepacket.message_str);
+            break;
+
             case TID_LIGHT:
-            {
-                printf(" [%lu] Luminosity : %0.3f \n", getTime(), LogData.lightpacket.lux);
-                fprintf(logfptr, " [%lf] Luminosity : %0.3f \n", getTime(), LogData.lightpacket.lux);
-            } break;
-            default:
-            {
-                printf(" [%lf] Luminosity : %0.3f \n", getTime(), LogData.lightpacket.lux);
-                fprintf(logfptr, " [%lf] Luminosity : %0.3f \n", getTime(), LogData.lightpacket.lux);
-            } break;
+
+                if(LogData.msg_type == MSGTYPE_DATA)
+                    fprintf(logfptr, " [%lf]\t[%s]\t[Light]\tLuminosity : %0.3f \n", getTime(), LogData.msg_type,LogData.lightpacket.lux);
+                else
+                    fprintf(logfptr,"[%lf]\t[%s]\t %s",getTime(),LogData.msg_type,LogData.messagepacket.message_str);
+            break;
+
+            case TID_MAIN:    
+                fprintf(logfptr,"[%lf]\t[%s]\t [Main] \t %s",getTime(),LogData.msg_type,LogData.messagepacket.message_str);
+            break;
+
+            case TID_SOCKET:
+                fprintf(logfptr,"[%lf]\t[%s]\t [Main] \t %s",getTime(),LogData.msg_type,LogData.messagepacket.message_str);
+            break;
         }
         fclose(logfptr);
     }

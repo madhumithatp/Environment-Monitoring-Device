@@ -15,12 +15,15 @@
 
 #include <mqueue.h>
 #include"logger_task.h"
+#include "driver_i2c.h"
+#define MAX_MSG_SIZE    (50)
 
 typedef enum 
 {
-    MSGTYPE_SENSOR_DATA = 1,
-    MSGTYPE_SENSOR_STATUS = 2,
-    MSGTYPE_EXIT = 3,
+    MSGTYPE_DATA = 1,
+    MSGTYPE_STATUS = 2,
+    MSGTYPE_EXIT = 0,
+    MSGTYPE_ERROR = -1,
 
 }MsgType_t;
 
@@ -39,7 +42,6 @@ typedef enum
 
 typedef struct 
 {
-    MsgType_t msg_type;
     TID_t ID;
     float temperature;
 
@@ -47,7 +49,6 @@ typedef struct
 
 typedef struct 
 {
-    MsgType_t msg_type;
     TID_t ID;
     float lux;
 
@@ -55,12 +56,19 @@ typedef struct
 
 typedef struct 
 {
+    char message_str[MAX_MSG_SIZE];
+
+}MessagePacket_t;
+
+typedef struct 
+{
+    MsgType_t msg_type;
     TID_t ID;
     union
     {
         LightPacket_t lightpacket;
         TemperaturePacket_t temperaturepacket;
-
+        MessagePacket_t messagepacket;
     };
     
 }Packet;
@@ -72,5 +80,6 @@ typedef struct
  * @return int 
  */
 int log_packet(Packet packet_log);
+return_status log_message(MsgType_t type,TID_t ID, char *s);
 
 #endif /* COMMON_H_ */

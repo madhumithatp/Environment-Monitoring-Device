@@ -20,7 +20,6 @@ int main(int argc, char **argv)
 {
 	StructThread MyThreads[3];
 	printf("Main task created\n");	
-	FILE *fptr;
 	int status;
 	if(argc < 2 )
 	printf("Enter the Filename for logging data \n");
@@ -37,12 +36,17 @@ int main(int argc, char **argv)
 	perror("Temp Task not created Error code ");
 	return 0;
 	}
+	else 
+		log_message(MSGTYPE_STATUS,TID_TEMPERATURE,"Temperature Task Created Successfully");
 	status= pthread_create(&threads2,NULL,light_task,(void *)&(MyThreads[1]));
 	if(status)
 	{
 	perror("Light Task not created Error code :");
 	return 0;
 	}
+	else
+		log_message(MSGTYPE_STATUS,TID_LIGHT,"Light Task Created Successfully");
+	
 	status= pthread_join(threads3,NULL);
 	if(status)
 	{

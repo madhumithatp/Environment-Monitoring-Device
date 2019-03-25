@@ -28,7 +28,7 @@ mqd_t temperature_task_mq_init()
 Packet temperature_task_packet_create(MsgType_t msgtype, float temp)
 {
     Packet packet_c;
-    packet_c.temperaturepacket.msg_type    = msgtype;
+    packet_c.msg_type                      = msgtype;
     packet_c.ID                            = TID_TEMPERATURE;
     packet_c.temperaturepacket.temperature = temp;
     return packet_c;
@@ -43,7 +43,7 @@ void temperature_task_timer_handler()
     float temperature;
     temperature = getTemperature(CELCIUS);
     Packet packet_c;
-    packet_c= temperature_task_packet_create(MSGTYPE_SENSOR_DATA,temperature);
+    packet_c= temperature_task_packet_create(MSGTYPE_DATA,temperature);
     
     log_packet(packet_c);
 

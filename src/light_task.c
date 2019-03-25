@@ -33,10 +33,9 @@ mqd_t light_task_mq_init()
 Packet light_task_packet_create(MsgType_t msg_type, float lux)
 {
     Packet packet_c;
-    packet_c.lightpacket.msg_type = msg_type;
-    packet_c.ID                   = 3;
-    packet_c.lightpacket.lux      = lux;
-    printf("Light Task Create : Structure polluted \n");
+    packet_c.msg_type        = msg_type;
+    packet_c.ID              = TID_LIGHT;
+    packet_c.lightpacket.lux = lux;
     return packet_c;
 }
 
@@ -45,7 +44,7 @@ void light_task_timer_handler()
     float lux;
     lux = getLuminosity();
     Packet packet_temp;
-    packet_temp= light_task_packet_create(MSGTYPE_SENSOR_DATA,lux);
+    packet_temp= light_task_packet_create(MSGTYPE_DATA,lux);
     printf("packet_create ID : %d \t lux : %f \t \n",packet_temp.ID,packet_temp.lightpacket.lux);
     log_packet(packet_temp);
     usleep(5000);
