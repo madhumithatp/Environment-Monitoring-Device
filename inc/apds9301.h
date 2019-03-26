@@ -49,7 +49,7 @@
 #define THRESHOLD_D_N 				(100)
 
 
-/*Bits in Interrupt Register*/
+/*Bits in IntERRORupt Register*/
 #define APDS9301_REG_INT_TH_INTR(x)	((x << 4) & 0x30)
 
 typedef enum light

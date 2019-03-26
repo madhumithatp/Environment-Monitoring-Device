@@ -14,17 +14,17 @@
 #define COMMON_H_
 
 #include <mqueue.h>
-//#include"logger_task.h"
 #include "driver_i2c.h"
+
 #define MAX_MSG_SIZE    (30)
 
 
 typedef enum 
 {
-    MSGTYPE_DATA = 0,
-    MSGTYPE_STATUS = 1,
-    MSGTYPE_EXIT = 2,
-    MSGTYPE_ERROR = 3,
+    TYPE_DATA = 0,
+    TYPE_STATUS = 1,
+    TYPE_EXIT = 2,
+    TYPE_ERROR = 3,
 
 }MsgType_t;
 
@@ -42,22 +42,6 @@ typedef enum
 
 }TID_t;
 
-
-
-typedef struct 
-{
-    TID_t ID;
-    float temperature;
-
-}TemperaturePacket_t;
-
-typedef struct 
-{
-    TID_t ID;
-    float lux;
-
-} LightPacket_t;
-
 typedef struct 
 {
     char message_str[MAX_MSG_SIZE];
@@ -69,8 +53,6 @@ typedef struct
     TID_t ID;
     union
     {
-        LightPacket_t lightpacket;
-        TemperaturePacket_t temperaturepacket;
         MessagePacket_t messagepacket;
     };
     

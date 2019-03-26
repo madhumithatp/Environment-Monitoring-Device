@@ -53,19 +53,19 @@ void * logger_task()
         switch(LogData.ID)
         {
             case TID_TEMPERATURE:
-                getTime(logfptr);fprintf(logfptr,"[%s]\t[Temperature]\t %s\n",MsgType_label[LogData.msg_type],LogData.messagepacket.message_str);
+                fprintf(logfptr,"[%s]\t[Temperature]\t %s\n",MsgType_label[LogData.msg_type],LogData.messagepacket.message_str);
             break;
 
             case TID_LIGHT:    
-                getTime(logfptr);fprintf(logfptr,"[%s]\t[Light]\t \t  %s \n",MsgType_label[LogData.msg_type],LogData.messagepacket.message_str);
+                fprintf(logfptr,"[%s]\t[Light]\t \t  %s \n",MsgType_label[LogData.msg_type],LogData.messagepacket.message_str);
             break;
 
             case TID_MAIN:   
-                getTime(logfptr);fprintf(logfptr,"[%s]\t [Main] \t %s",MsgType_label[LogData.msg_type],LogData.messagepacket.message_str);
+                fprintf(logfptr,"[%s]\t [Main] \t %s",MsgType_label[LogData.msg_type],LogData.messagepacket.message_str);
             break;
 
             case TID_SOCKET:
-                getTime(logfptr);fprintf(logfptr,"[%s]\t [Socket] \t %s",MsgType_label[LogData.msg_type],LogData.messagepacket.message_str);
+                fprintf(logfptr,"[%s]\t [Socket] \t %s",MsgType_label[LogData.msg_type],LogData.messagepacket.message_str);
             break;
         }
         fclose(logfptr);

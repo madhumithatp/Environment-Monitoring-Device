@@ -20,10 +20,9 @@ mqd_t light_task_mq_init()
 {   
     mqd_t ret_mq;
     struct mq_attr light_mqattr;
-    light_mqattr.mq_msgsize = sizeof(LightPacket_t);
+    light_mqattr.mq_msgsize = sizeof(Packet);
     light_mqattr.mq_maxmsg = 128;
     light_mqattr.mq_flags = 0;
-
     mq_unlink(MQ_LIGHT);
     ret_mq = mq_open(MQ_LIGHT,O_CREAT | O_RDWR, 0666, light_mqattr);
 
@@ -33,38 +32,32 @@ mqd_t light_task_mq_init()
 void light_task_timer_handler()
 {
     float lux;
+    unsigned long time;
     lux = getLuminosity();
-    Packet packet_temp;
-    char msg[20];
-    sprintf(msg,"Current Luminosity : %f",lux);
-    log_message(MSGTYPE_DATA,TID_LIGHT,msg);
+    log_message(TYPE_DATA,TID_LIGHT,"Current Luminance : %f \t",lux);
     usleep(5000);
 }
 
 void* light_task()
 {
-    Packet LogLightData;
-    Packet *ptr_light = &LogLightData;
+    timer_t light_timerID;
 	int count = 0;
-	//light res;
+	
 	printf("Light Task Entered\n");
-	float light2;
     mq_light = light_task_mq_init();
 	if(apds9301_power_on()!= ERROR)
 	{
 		if(apds9301_setup() != ERROR)
 		{
-			while(count < 10)
-			{
-				light_task_timer_handler();
-                //	printf("Light is %f\n",light2);
-				count++;
-			}
-			// res = is_Day_or_Night();	
-			// if(res == NIGHT)
-			// 	printf("Night\n");
-			// else
-			// 	printf("Day\n");
+            while(count<10)
+            {
+                light_task_timer_handler();
+                count++;
+            }
+            // if(create_posixtimer(light_timerID,light_task_timer_handler) == -1)
+            //     printf("Light Timer Create Error \n");
+            // if(start_posixtimer(light_timerID,2) == -1)
+            //     printf("Light Timer Start Error \n");
 		}	
 	}
 

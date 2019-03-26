@@ -19,8 +19,9 @@
 /**
  * @brief Get the Time object
  * 
- * @param ptr  
+ * @param ptr 
+ * @return unsigned long 
  */
-void getTime(FILE * ptr);
+unsigned long getTime();
 
 #endif /* PRINTTIME_H_ */

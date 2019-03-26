@@ -29,11 +29,16 @@ volatile float temperature;
 mqd_t temperature_task_mq_init();
 
 /**
- * @brief populates Temperature Structure
+ * @brief Timer Handler for Temperature Sensor
  * 
  */
-Packet temperature_task_packet_create( MsgType_t msgtype, float temp);
 void temperature_task_timer_handler();
+
+/**
+ * @brief Thread Callback Function
+ * 
+ * @return void* 
+ */
 void* temperature_task();
 
 
