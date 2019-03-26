@@ -25,16 +25,6 @@
  */
 mqd_t light_task_mq_init();
 
-
-/**
- * @brief 
- * Function to populate packets
- *  
- * @param msg_type 
- * @param lux 
- */
-Packet light_task_packet_create( MsgType_t msg_type, float lux);
-
 /**
  * @brief Timer Handler for light task
  * 

@@ -13,9 +13,11 @@
 #include "logger_task.h"
 #include "driver_i2c.h"
 
+mqd_t mq_log;           //Definitation of Mqueue descriptor
+
 mqd_t log_task_mq_init()
 {   
-    printf("Logger Task Init \n");
+   
     mqd_t ret_mq;
     struct mq_attr log_mqattr;
     log_mqattr.mq_msgsize = sizeof(Packet);
@@ -24,19 +26,22 @@ mqd_t log_task_mq_init()
 
     mq_unlink(MQ_LOG);
     ret_mq = mq_open(MQ_LOG,O_CREAT | O_RDWR, 0666, &log_mqattr);
-
+    printf("Logger Task Init \n");
     return ret_mq;
 }
 
 void * logger_task()
 {
+    char * MsgType_label[4]= {"DATA", "STATUS","EXIT","ERROR"};
     FILE * logfptr = fopen(Filename, "w");
-    fprintf(logfptr, "[%lf]\t[Status]\tLogger Task Created Successfully\n",getTime());
-    fclose(logfptr);
+    fprintf(logfptr, " [STATUS]\tLogger Task Entered \n");
+    int8_t _msgtype = 0;
+    char* type;
 
     Packet LogData;
     mq_log = log_task_mq_init();
 
+    memset(&LogData, 0, sizeof(Packet));
     memset(&LogData, 0, sizeof(Packet));
     while(1)
     {
@@ -45,31 +50,22 @@ void * logger_task()
         {
             perror("Logger Queue Receive Error \n");
         }
-        printf("Logger ID %d \n",LogData.ID);
         switch(LogData.ID)
         {
             case TID_TEMPERATURE:
-            
-                if(LogData.msg_type == MSGTYPE_DATA)
-                    fprintf(logfptr, " [%lf]\t[%s]\t[Temperature]\tCurrent Temperature : %0.3f DegC \n", getTime(), LogData.msg_type, LogData.temperaturepacket.temperature);
-                else
-                    fprintf(logfptr,"[%lf]\t[%s]\t %s",getTime(),LogData.msg_type,LogData.messagepacket.message_str);
+                getTime(logfptr);fprintf(logfptr,"[%s]\t[Temperature]\t %s\n",MsgType_label[LogData.msg_type],LogData.messagepacket.message_str);
             break;
 
-            case TID_LIGHT:
-
-                if(LogData.msg_type == MSGTYPE_DATA)
-                    fprintf(logfptr, " [%lf]\t[%s]\t[Light]\tLuminosity : %0.3f \n", getTime(), LogData.msg_type,LogData.lightpacket.lux);
-                else
-                    fprintf(logfptr,"[%lf]\t[%s]\t %s",getTime(),LogData.msg_type,LogData.messagepacket.message_str);
+            case TID_LIGHT:    
+                getTime(logfptr);fprintf(logfptr,"[%s]\t[Light]\t \t  %s \n",MsgType_label[LogData.msg_type],LogData.messagepacket.message_str);
             break;
 
-            case TID_MAIN:    
-                fprintf(logfptr,"[%lf]\t[%s]\t [Main] \t %s",getTime(),LogData.msg_type,LogData.messagepacket.message_str);
+            case TID_MAIN:   
+                getTime(logfptr);fprintf(logfptr,"[%s]\t [Main] \t %s",MsgType_label[LogData.msg_type],LogData.messagepacket.message_str);
             break;
 
             case TID_SOCKET:
-                fprintf(logfptr,"[%lf]\t[%s]\t [Main] \t %s",getTime(),LogData.msg_type,LogData.messagepacket.message_str);
+                getTime(logfptr);fprintf(logfptr,"[%s]\t [Socket] \t %s",MsgType_label[LogData.msg_type],LogData.messagepacket.message_str);
             break;
         }
         fclose(logfptr);

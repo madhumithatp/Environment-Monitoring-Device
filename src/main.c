@@ -1,5 +1,7 @@
+#ifndef MAIN_H_
+#define MAIN_H_
 /*
-@File Name	: myI2C.h
+@File Name	: main.h
 @Description: Main task spawning multiple threads
 @Author		: Deepesh Sonigra 
 @Author		: Madhumitha Tolakanahalli
@@ -7,13 +9,14 @@
 @citation	: https://elinux.org/Interfacing_with_I2C_Devices
 */
 
-#include"main.h"
+#include "main.h"
 
 pthread_t threads1, threads2, threads3;
 
 typedef struct
 {
 	char *FileName;
+
 }StructThread;
 
 int main(int argc, char **argv)
@@ -23,12 +26,6 @@ int main(int argc, char **argv)
 	int status;
 	if(argc < 2 )
 	printf("Enter the Filename for logging data \n");
-	status= pthread_create(&threads3,NULL,logger_task,(void *)&(MyThreads[2]));
-	if(status)
-	{
-	perror("Log Task not created Error code :");
-	return 0;
-	}
 
 	status= pthread_create(&threads1,NULL,temperature_task,(void *)&(MyThreads[0]));
 	if(status)
@@ -36,34 +33,38 @@ int main(int argc, char **argv)
 	perror("Temp Task not created Error code ");
 	return 0;
 	}
-	else 
-		log_message(MSGTYPE_STATUS,TID_TEMPERATURE,"Temperature Task Created Successfully");
+
 	status= pthread_create(&threads2,NULL,light_task,(void *)&(MyThreads[1]));
 	if(status)
 	{
-	perror("Light Task not created Error code :");
-	return 0;
+		perror("Light Task not created Error code :");
+		return 0;
 	}
-	else
-		log_message(MSGTYPE_STATUS,TID_LIGHT,"Light Task Created Successfully");
 	
-	status= pthread_join(threads3,NULL);
+	status= pthread_create(&threads3,NULL,logger_task,(void *)&(MyThreads[2]));
 	if(status)
 	{
-	perror("log Task join error Error code");
+	perror("Log Task not created Error code :");
 	return 0;
 	}
 	status= pthread_join(threads1,NULL);
 	if(status)
 	{
-	perror("Temp Task join error Error code :");
-	return 0;
+		perror("Temp Task join error Error code :");
+		return 0;
 	}
 	status= pthread_join(threads2,NULL);
 	if(status)
 	{
-	perror("Light Task join error Error code");
-	return 0;
+		perror("Light Task join error Error code");
+		return 0;
 	}
-
+	status= pthread_join(threads3,NULL);
+	if(status)
+	{
+		perror("log Task join error Error code");
+		return 0;
+	}
 }
+
+#endif /* MAIN_H_ */

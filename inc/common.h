@@ -14,20 +14,24 @@
 #define COMMON_H_
 
 #include <mqueue.h>
-#include"logger_task.h"
+//#include"logger_task.h"
 #include "driver_i2c.h"
-#define MAX_MSG_SIZE    (50)
+#define MAX_MSG_SIZE    (30)
+
 
 typedef enum 
 {
-    MSGTYPE_DATA = 1,
-    MSGTYPE_STATUS = 2,
-    MSGTYPE_EXIT = 0,
-    MSGTYPE_ERROR = -1,
+    MSGTYPE_DATA = 0,
+    MSGTYPE_STATUS = 1,
+    MSGTYPE_EXIT = 2,
+    MSGTYPE_ERROR = 3,
 
 }MsgType_t;
 
-
+/**
+ * @brief
+ * 
+ */
 typedef enum 
 {
     TID_MAIN = 1,
@@ -57,7 +61,6 @@ typedef struct
 typedef struct 
 {
     char message_str[MAX_MSG_SIZE];
-
 }MessagePacket_t;
 
 typedef struct 
@@ -80,6 +83,21 @@ typedef struct
  * @return int 
  */
 int log_packet(Packet packet_log);
-return_status log_message(MsgType_t type,TID_t ID, char *s);
+
+/**
+ * @brief logs messages to the logger task
+ * reference http://www.cplusplus.com/reference/cstdio/vsprintf/
+ * @param type 
+ * @param ID 
+ * @param format 
+ * @param ... 
+ * @return return_status 
+ */
+return_status log_message(MsgType_t type,TID_t ID,char * format, ...);
+
+/**
+ * @brief convert enum to string
+ * 
+ */
 
 #endif /* COMMON_H_ */

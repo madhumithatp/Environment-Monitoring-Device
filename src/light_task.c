@@ -30,23 +30,14 @@ mqd_t light_task_mq_init()
     return ret_mq;
 }
 
-Packet light_task_packet_create(MsgType_t msg_type, float lux)
-{
-    Packet packet_c;
-    packet_c.msg_type        = msg_type;
-    packet_c.ID              = TID_LIGHT;
-    packet_c.lightpacket.lux = lux;
-    return packet_c;
-}
-
 void light_task_timer_handler()
 {
     float lux;
     lux = getLuminosity();
     Packet packet_temp;
-    packet_temp= light_task_packet_create(MSGTYPE_DATA,lux);
-    printf("packet_create ID : %d \t lux : %f \t \n",packet_temp.ID,packet_temp.lightpacket.lux);
-    log_packet(packet_temp);
+    char msg[20];
+    sprintf(msg,"Current Luminosity : %f",lux);
+    log_message(MSGTYPE_DATA,TID_LIGHT,msg);
     usleep(5000);
 }
 
@@ -65,7 +56,7 @@ void* light_task()
 		{
 			while(count < 10)
 			{
-				light_task_timer_handler(&ptr_light);
+				light_task_timer_handler();
                 //	printf("Light is %f\n",light2);
 				count++;
 			}

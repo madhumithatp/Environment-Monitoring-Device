@@ -24,12 +24,12 @@ int tmp102_open()
 
 	if(fd < 0)
 	{
-		perror("ERROR: open I2C bus");
+		perror("TMP 102 ERROR: open I2C bus");
 		return ERROR;
 	}
 	if(ioctl(fd,I2C_SLAVE,TMP102_SLAVE_ADDR) < 0)
 	{
-		perror("ERROR: Open IOCTL");
+		perror("TMP 102 ERROR: Open IOCTL");
 		return ERROR;
 	}
 
@@ -45,7 +45,7 @@ int tmp102_close(int fd)
 {
 	if(close(fd) < 0)
 	{
-		perror("ERROR: Close File Descriptor");
+		perror("TMP 102 ERROR: Close File Descriptor");
 		return ERROR;
 	}
 	return SUCCESS;
@@ -78,7 +78,7 @@ return_status tmp102_write_reg(uint8_t addr , uint16_t value)
 	fd = write(fd,&buff,(sizeof(buff)-1));
 	if(fd == ERROR)
 	{
-		perror("ERROR: Write fail file descriptor TMP102");
+		perror("TMP 102 ERROR: Write fail file descriptor TMP102");
 		return ERROR;
 	}
 	if(tmp102_close(fd) < 0)
@@ -102,13 +102,13 @@ uint16_t tmp102_read_reg(uint8_t addr)
 	}
 	if(write(fd, &addr,1)<0)
 	{
-		perror("ERROR: Write fail file descriptor");
+		perror("TMP 102 ERROR: Write fail file descriptor");
 		return ERROR;
 	}
 
 	if(read(fd, &buff,2)<0)
 	{
-		perror("ERROR: read fail file descriptor");
+		perror("TMP 102 ERROR: read fail file descriptor");
 		return ERROR;
 	}
 	if(tmp102_close(fd) < 0 )
@@ -140,12 +140,12 @@ float regval_to_tempC(uint16_t regval)
 		float tempval;
 		/*Convert Value to 12 bits ignoring 4 least significant bits*/
 		regval = regval >> 4  & 0x0FFF;
-		printf("REGVAL 12 bit %x\n",regval);
+		
 		/*Check Negative or Postive Temperature*/
 		if(regval > 0x7FF)
 		{ 
 			tempval = (regval * RESOLUTION_C)- 256;
-			printf("Getting Negative temp\n");		
+					
 		}		
 		else
 			tempval = (regval * RESOLUTION_C);

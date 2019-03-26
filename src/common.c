@@ -12,10 +12,11 @@
 #include <stdarg.h>
 #include "common.h"
 
+extern mqd_t mq_log;
 
 int log_packet(Packet packet_log)
 {
-    printf("log_packet() \n");
+    //printf("log_packet() \n");
    
    // printf(" Logging Task ID : %d \t lux : %f \t \n",packet_log.ID,packet_log.lightpacket.lux);
     if(packet_log.ID == TID_TEMPERATURE)
@@ -31,10 +32,11 @@ int log_packet(Packet packet_log)
     if(packet_log.ID == TID_LIGHT)
     { 
         printf("mq_send(light) \n");
-        if((mq_send(mq_log,(const char*)&packet_log,sizeof(packet_log),0))== -1)
+        if((mq_send(mq_log,(char*)&packet_log,sizeof(packet_log),0))== -1)
         {
             perror("Error Sending Light Packet");
-            //log_error("Error Sending Light PAcket\n");
+            //log_error("Error 
+           // Sending Light PAcket\n");
             return -1;
         }
     }
@@ -42,18 +44,25 @@ int log_packet(Packet packet_log)
 
 }
 
-return_status log_message(MsgType_t type,TID_t ID, char *s)
+return_status log_message(MsgType_t type,TID_t ID,char* format, ...)
 {
     Packet packet_log;
-     snprintf(packet_log.messagepacket.message_str, sizeof(packet_log.messagepacket.message_str),s);
+    va_list args;
+    va_start(args,format);
+    vsprintf(packet_log.messagepacket.message_str,format,args);
+    printf("sizeof(messagepacket)%d \t sizeof(packet) %d",sizeof(packet_log.messagepacket),sizeof(packet_log));
+    printf("Message :%s\n",packet_log.messagepacket.message_str);
+    va_end(args);
     packet_log.msg_type = type; 
     packet_log.ID       = ID;
-    if((mq_send(mq_log,(const char*)&packet_log,sizeof(packet_log),0))== -1)
+    if((mq_send(mq_log,(char*)&packet_log,sizeof(packet_log),0))== -1)
         {
             perror("Error Sending Message Packet");
-            //log_error("Error Sending Light PAcket\n");
+            //log_error("Error Sending Light PAcket\n");  
             return ERROR;
         }
+    
     return SUCCESS;
 }
+
 

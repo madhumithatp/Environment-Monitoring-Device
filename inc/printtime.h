@@ -9,18 +9,18 @@
 #ifndef PRINTTIME_H_
 #define PRINTTIME_H_`
 
+#include <stdio.h>
 #include <sys/time.h>
 #include<stddef.h>
 #include<time.h>
 
 #define USEC_TO_MSEC(x) 	(x /= (1000000))
 
-
-unsigned long getTime();
-	/*
-@description: prints current time in secs 
-@return 	: double , current time 
-*/
-
+/**
+ * @brief Get the Time object
+ * 
+ * @param ptr  
+ */
+void getTime(FILE * ptr);
 
 #endif /* PRINTTIME_H_ */

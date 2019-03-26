@@ -10,11 +10,11 @@
  * 
  */
 
-#ifndef MAIN_H_
-#define MAIN_H_
+
 
 #include <pthread.h>
 #include <time.h>
+#include <stddef.h>
 #include "printtime.h"
 #include "light_task.h"
 #include "temperature_task.h"
@@ -22,4 +22,3 @@
 #include "common.h"
 
 
-#endif /* MAIN_H_*/

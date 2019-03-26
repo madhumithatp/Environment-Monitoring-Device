@@ -16,7 +16,7 @@
 #include "tmp102.h"
 #include"common.h"
 
-#define MQ_TEMPERATURE       "/msgqueue_temperature"
+#define MQ_TEMPERATURE          "/msgqueue_temperature"
 
 mqd_t mq_temperature;
 volatile float temperature;

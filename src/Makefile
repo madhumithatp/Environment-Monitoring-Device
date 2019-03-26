@@ -12,7 +12,7 @@ ifeq ($(PLATFORM),BBG)
 endif
 
 CC_FLAGS = -w -g
-PATH=/home/deepesh/buildroot/buildroot/output/host/usr/bin:$PATH
+#PATH=/home/deepesh/buildroot/buildroot/output/host/usr/bin:$PATH
 #file names 
 SOURCES = $(wildcard *.c)
 INCLUDES:=-I../inc/

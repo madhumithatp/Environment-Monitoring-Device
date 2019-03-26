@@ -20,7 +20,7 @@
 
 #define Filename "log.txt"
 
-mqd_t mq_log;
+extern mqd_t mq_log;
 
 /**
  * @brief Initilaize arrtibutes for message queue

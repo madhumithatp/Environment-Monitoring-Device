@@ -34,19 +34,16 @@ Packet temperature_task_packet_create(MsgType_t msgtype, float temp)
     return packet_c;
 }
 
-
-
-
 void temperature_task_timer_handler()
 {
 
     float temperature;
     temperature = getTemperature(CELCIUS);
     Packet packet_c;
-    packet_c= temperature_task_packet_create(MSGTYPE_DATA,temperature);
-    
-    log_packet(packet_c);
-
+    packet_c = temperature_task_packet_create(MSGTYPE_STATUS,temperature);
+    char msg[20];
+    sprintf(msg,"Current Temperature : %f",temperature);
+    log_message(MSGTYPE_DATA,TID_TEMPERATURE,msg);
 }
 
 void* temperature_task()
@@ -60,7 +57,7 @@ void* temperature_task()
      
 	 while(count < 10)
 	 {
-         temperature_task_timer_handler(&packet_temp);
+         temperature_task_timer_handler();
          usleep(500);
 	 	count++;
 	 }
