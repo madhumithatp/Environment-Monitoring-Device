@@ -50,7 +50,7 @@ return_status log_message(MsgType_t type,TID_t ID,char* format, ...)
     va_list args;
     va_start(args,format);
     vsprintf(packet_log.messagepacket.message_str,format,args);
-    printf("sizeof(messagepacket)%d \t sizeof(packet) %d",sizeof(packet_log.messagepacket),sizeof(packet_log));
+    //printf("sizeof(messagepacket)%d \t sizeof(packet) %d",sizeof(packet_log.messagepacket),sizeof(packet_log));
     printf("Message :%s\n",packet_log.messagepacket.message_str);
     va_end(args);
     packet_log.msg_type = type; 

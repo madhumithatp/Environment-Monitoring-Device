@@ -22,6 +22,6 @@
  * @param ptr 
  * @return unsigned long 
  */
-unsigned long getTime();
+void getTime(FILE * ptr);
 
 #endif /* PRINTTIME_H_ */

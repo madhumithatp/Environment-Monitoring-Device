@@ -15,7 +15,6 @@
 volatile float light_state;
 mqd_t mq_light;
 
-
 mqd_t light_task_mq_init()
 {   
     mqd_t ret_mq;
@@ -31,35 +30,38 @@ mqd_t light_task_mq_init()
 
 void light_task_timer_handler()
 {
+    static int count = 0;
     float lux;
-    unsigned long time;
     lux = getLuminosity();
     log_message(TYPE_DATA,TID_LIGHT,"Current Luminance : %f \t",lux);
-    usleep(5000);
+    printf("Light Task Timer Handler Count : %d \t Lux : %f\n",count++,lux);
 }
 
 void* light_task()
 {
-    timer_t light_timerID;
 	int count = 0;
-	
+	timer_t light_timerID;
 	printf("Light Task Entered\n");
     mq_light = light_task_mq_init();
 	if(apds9301_power_on()!= ERROR)
 	{
 		if(apds9301_setup() != ERROR)
 		{
-            while(count<10)
-            {
-                light_task_timer_handler();
-                count++;
-            }
-            // if(create_posixtimer(light_timerID,light_task_timer_handler) == -1)
-            //     printf("Light Timer Create Error \n");
-            // if(start_posixtimer(light_timerID,2) == -1)
-            //     printf("Light Timer Start Error \n");
-		}	
-	}
+            // while(count<10)
+            // {
+            //     light_task_timer_handler();
+            //     usleep(500);
+            // }
 
+            if(create_posixtimer(&light_timerID,&light_task_timer_handler) == -1)
+                printf("Light Timer Create Error \n");
+            else printf("Light Timer created \n");
+            if(start_posixtimer(light_timerID,1) == -1)
+                printf("Light Timer Start Error \n");
+            else printf("Light Timer Started \n");
+		}	
+        else printf("Light Setup failed \n");
+	 }
+     else printf("Light PowerOn Failed  \n");
 
 }

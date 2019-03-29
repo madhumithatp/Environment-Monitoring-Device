@@ -5,6 +5,7 @@
         "logger_task.h": "c",
         "printtime.h": "c",
         "timer.h": "c",
-        "light_task.h": "c"
+        "light_task.h": "c",
+        "posix_timer.h": "c"
     }
 }

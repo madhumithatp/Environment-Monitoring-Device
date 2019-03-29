@@ -14,8 +14,8 @@
 #define TEMPERATURE_TASK_H
 
 #include "tmp102.h"
-#include"common.h"
-
+#include "common.h"
+#include "posix_timer.h"
 #define MQ_TEMPERATURE          "/msgqueue_temperature"
 
 mqd_t mq_temperature;

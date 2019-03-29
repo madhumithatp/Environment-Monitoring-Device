@@ -15,7 +15,7 @@
 
 #include "common.h"
 #include "apds9301.h"
-#include "timer.h"
+#include "posix_timer.h"
 
 #define MQ_LIGHT        "/msgqueue_light"
 
