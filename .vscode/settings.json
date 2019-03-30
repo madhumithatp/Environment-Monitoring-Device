@@ -6,6 +6,12 @@
         "printtime.h": "c",
         "timer.h": "c",
         "light_task.h": "c",
-        "posix_timer.h": "c"
+        "posix_timer.h": "c",
+        "common.h": "c",
+        "driver_i2c.h": "c",
+        "stat.h": "c",
+        "i2c-dev.h": "c",
+        "signalhandler.h": "c",
+        "userled.h": "c"
     }
 }

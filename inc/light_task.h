@@ -19,6 +19,8 @@
 
 #define MQ_LIGHT        "/msgqueue_light"
 
+volatile float lux;
+
 /**
  * @brief Function to initialize Light Message Queue
  * 

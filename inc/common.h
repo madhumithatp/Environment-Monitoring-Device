@@ -15,16 +15,28 @@
 
 #include <mqueue.h>
 #include "driver_i2c.h"
+#include "signalhandler.h"
 
 #define MAX_MSG_SIZE    (30)
+
+mqd_t mq_log;           //Definitation of Mqueue descriptor
+mqd_t mq_temperature;
+mqd_t mq_light;
+mqd_t mq_socket;
+mqd_t mq_main;
+
+volatile sig_atomic_t kill_signal;
+
 
 
 typedef enum 
 {
     TYPE_DATA = 0,
-    TYPE_STATUS = 1,
+    TYPE_INFO = 1,
     TYPE_EXIT = 2,
     TYPE_ERROR = 3,
+    TYPE_HEARTBEAT = 4
+    
 
 }MsgType_t;
 
@@ -34,12 +46,12 @@ typedef enum
  */
 typedef enum 
 {
-    TID_MAIN = 1,
-    TID_LOGGER = 2,
-    TID_LIGHT = 3,
-    TID_TEMPERATURE = 4,
-    TID_SOCKET = 5,
-
+    
+    TID_LOGGER = 0,
+    TID_LIGHT = 1,
+    TID_TEMPERATURE = 2,
+    TID_SOCKET = 3,
+    TID_MAIN = 4,
 }TID_t;
 
 typedef struct 
@@ -51,11 +63,7 @@ typedef struct
 {
     MsgType_t msg_type;
     TID_t ID;
-    union
-    {
-        MessagePacket_t messagepacket;
-    };
-    
+    MessagePacket_t messagepacket;
 }Packet;
 
 /**
@@ -76,10 +84,20 @@ int log_packet(Packet packet_log);
  * @return return_status 
  */
 return_status log_message(MsgType_t type,TID_t ID,char * format, ...);
-
 /**
- * @brief convert enum to string
+ * @brief sending heartbeat
  * 
  */
+return_status send_packet( MsgType_t type,TID_t ID_to,TID_t ID_from,char* format, ...);
+
+/**
+ * 
+ * @brief receive heartbeat
+ * 
+ * @param mq_type 
+ * @param heartbeat 
+ * @return return_status 
+ */
+return_status receive_packet(mqd_t mq_type, Packet *Received);
 
 #endif /* COMMON_H_ */

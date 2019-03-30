@@ -11,9 +11,9 @@
  */
 
 #include "logger_task.h"
-#include "driver_i2c.h"
+#include "common.h"
 
-mqd_t mq_log;           //Definitation of Mqueue descriptor
+
 
 mqd_t log_task_mq_init()
 {   
@@ -32,7 +32,8 @@ mqd_t log_task_mq_init()
 
 void * logger_task()
 {
-    char * MsgType_label[4]= {"DATA", "STATUS","EXIT","ERROR"};
+    static int exit_bit;
+    char * MsgType_label[5]= {"DATA", "INFO","EXIT","ERROR, HEARTBEAT"};
     FILE * logfptr = fopen(Filename, "w");
     getTime(logfptr);fprintf(logfptr, " [STATUS]\tLogger Task Entered \n");
     int8_t _msgtype = 0;
@@ -43,39 +44,54 @@ void * logger_task()
 
     memset(&LogData, 0, sizeof(Packet));
 
-    while(1)
+    while(kill_signal == 0)
     {
         if(mq_receive(mq_log,(char * )&LogData,sizeof(LogData),NULL) == -1)
         {
             perror("Logger Queue Receive Error \n");
-        }
-        else
-        {
-                printf("Message Received\n");
         }
         //logfptr = fopen(Filename, "a");
         switch(LogData.ID)
         {
             case TID_TEMPERATURE:
                 logfptr = fopen(Filename, "a");
-                printf("Temperature Task Case \n");
-                getTime(logfptr);fprintf(logfptr,"[%s]\t[Temperature]\t %s\n",MsgType_label[LogData.msg_type],LogData.messagepacket.message_str);
+              
+                getTime(logfptr);
+                fprintf(logfptr,"[%s]\t[Temperature]\t %s\n",MsgType_label[LogData.msg_type],LogData.messagepacket.message_str);
                 fclose(logfptr);
             break;
 
             case TID_LIGHT:   
+               
                 logfptr = fopen(Filename, "a"); 
-                printf("Light Task Case \n"); 
                 getTime(logfptr);fprintf(logfptr,"[%s]\t[Light]\t \t  %s \n",MsgType_label[LogData.msg_type],LogData.messagepacket.message_str);
                 fclose(logfptr);
             break;
 
-            case TID_MAIN:   
-                getTime(logfptr);fprintf(logfptr,"[%s]\t [Main] \t %s",MsgType_label[LogData.msg_type],LogData.messagepacket.message_str);
+            case TID_MAIN:  
+                {
+                    
+                    logfptr = fopen(Filename, "a"); 
+                    switch(LogData.msg_type)
+                    {
+                        case TYPE_HEARTBEAT:
+                            send_packet(TYPE_HEARTBEAT,TID_MAIN,TID_LOGGER,"Logger:Sending HeartBeat ");
+                        break;
+                        case TYPE_INFO:
+                            getTime(logfptr); fprintf(logfptr,"[%s]\t[Main]\t\t%s \n",MsgType_label[LogData.msg_type],LogData.messagepacket.message_str); 
+                        break;
+                        default:
+                            getTime(logfptr);fprintf(logfptr,"[%s]\t [Main]\t\t%s\n else",MsgType_label[LogData.msg_type],LogData.messagepacket.message_str);
+                        break;  
+                    }
+                    fclose(logfptr);
+                }
             break;
 
             case TID_SOCKET:
+                logfptr = fopen(Filename, "a"); 
                 getTime(logfptr);fprintf(logfptr,"[%s]\t [Socket] \t %s",MsgType_label[LogData.msg_type],LogData.messagepacket.message_str);
+                fclose(logfptr);
             break;
         }
         //fclose(logfptr);

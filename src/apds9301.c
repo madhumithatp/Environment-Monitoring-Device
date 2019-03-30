@@ -55,7 +55,7 @@ int apds9301_close(int fd)
 return_status apds9301_setup()
 {
 	uint8_t data = apds9301_read_reg_1byte(APDS9301_REG_CTRL);
-	printf("Poweron setup %x\n",data);
+//	printf("Poweron setup %x\n",data);
 
 	if(apds9301_read_reg_1byte(APDS9301_REG_ID) != 0x50)
 	{
@@ -80,7 +80,7 @@ return_status apds9301_power_on()
 		return ERROR;
 	}
 	uint8_t data = apds9301_read_reg_1byte(APDS9301_REG_CTRL);
-	printf("Poweron read %x\n",data);
+	//printf("Poweron read %x\n",data);
 	return SUCCESS;
 }
 

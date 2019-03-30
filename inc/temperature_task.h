@@ -18,7 +18,7 @@
 #include "posix_timer.h"
 #define MQ_TEMPERATURE          "/msgqueue_temperature"
 
-mqd_t mq_temperature;
+
 volatile float temperature;
 
 /*

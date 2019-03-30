@@ -27,10 +27,58 @@ mqd_t temperature_task_mq_init()
 void temperature_task_timer_handler()
 {
     static int count = 0;
-    float temperature;
     temperature = getTemperature(CELCIUS);
     log_message(TYPE_DATA,TID_TEMPERATURE,"Current Temperature : %f",temperature);
-    printf("Temperature Task Timer Handler Count : %d \t Temperature : %f\n",count++,temperature);
+   // printf("Temperature Task Timer Handler Count : %d \t Temperature : %f\n",count++,temperature);
+}
+
+void temperature_task_response()
+{
+    float temperature;
+    Packet response;
+
+    while(kill_signal == 0)
+    {
+            memset(&response,0,sizeof(response));
+
+        
+        if(receive_packet(mq_temperature, &response)== ERROR)
+        {
+            perror("Error Receive Packet Temperature");
+            continue;
+        }
+        
+       
+            // printf("Temp message type =%d",response.msg_type);
+            switch(response.msg_type)
+            {
+                case TYPE_HEARTBEAT:
+                send_packet(TYPE_HEARTBEAT,response.ID,TID_TEMPERATURE,"Sending HeartBeat\n");
+            
+                break;
+
+                case TYPE_DATA:
+                temperature = getTemperature(CELCIUS);
+                send_packet(TYPE_DATA,response.ID,TID_TEMPERATURE,"Current Temperature is %f",temperature);
+                break;
+
+                case TYPE_INFO:
+               // send_packet(TYPE_STATUS,response.ID,TID_TEMPERATURE,"Status Working Correctly");
+                break;
+
+                case TYPE_ERROR:
+                break;
+                
+                case TYPE_EXIT:
+              //  send_packet(TYPE_EXIT,response.ID,TID_TEMPERATURE,"Exiting Temperature sensor\n");
+                log_message(TYPE_EXIT,TID_TEMPERATURE,"Task Exit request from ID = %d",response.ID);
+                break;
+
+            }
+        
+
+
+    }
 }
 
 void* temperature_task()
@@ -41,18 +89,21 @@ void* temperature_task()
     mq_temperature=temperature_task_mq_init();
 	float temperature;
       
-	//  while(count < 10)
-	//  {
-    //      temperature_task_timer_handler();
-    //      usleep(500);
-	//  	count++;
-	//  }
 
     if(create_posixtimer(&temperature_timerID,&temperature_task_timer_handler) == -1)
         printf("Temperature Timer Create Error \n");
-    else printf("Temperature Timer Created \n");
-    if(start_posixtimer(temperature_timerID,1) == -1)
+    else 
+        printf("Temperature Timer Created \n");
+    
+    if(start_posixtimer(temperature_timerID,2) == -1)
         printf("Temperature Timer Start Error \n");
-    else printf("Temperature Timer Started \n");
+    else 
+        printf("Temperature Timer Started \n");
+    
+    temperature_task_response();
+    stop_posixtimer(temperature_timerID);
+    delete_posixtimer(temperature_timerID);
+    mq_close(mq_temperature);
+
 
 }

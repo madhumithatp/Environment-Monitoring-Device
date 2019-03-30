@@ -65,4 +65,68 @@ return_status log_message(MsgType_t type,TID_t ID,char* format, ...)
     return SUCCESS;
 }
 
+return_status send_packet( MsgType_t type,TID_t ID_to, TID_t ID_from,char* format, ...)
+{
+     Packet packet_log;
+     va_list args;
+     va_start(args,format);
+     vsprintf(packet_log.messagepacket.message_str,format,args);
+     va_end(args);
+     packet_log.msg_type = type;
+     packet_log.ID       = ID_from;
+     switch(ID_to)
+     {
+        case TID_MAIN:
+             if((mq_send(mq_main,(char*)&packet_log,sizeof(packet_log),0))== -1)
+             {
+                 perror("Error Sending Message Packet");
+                 return ERROR;
+            }
+        break;
+        
+        case TID_TEMPERATURE:
+             if((mq_send(mq_temperature,(char*)&packet_log,sizeof(packet_log),0))== -1)
+             {
+                 perror("Error Sending Message Packet");
+                 return ERROR;
+            }
+        break;
+        case TID_LIGHT:
+             if((mq_send(mq_light,(char*)&packet_log,sizeof(packet_log),0))== -1)
+             {
+                 perror("Error Sending Message Packet");
+                 return ERROR;
+             }
+        break;
+                case TID_LOGGER:
+             if((mq_send(mq_log,(char*)&packet_log,sizeof(packet_log),0))== -1)
+             {
+                 perror("Error Sending Message Packet");
+                 return ERROR;
+             }
+        break;
+         case TID_SOCKET:
+             if((mq_send(mq_socket,(char*)&packet_log,sizeof(packet_log),0))== -1)
+             {
+                 perror("Error Sending Message Packet");
+                 return ERROR;
+             }
+        break;
+        
+
+     } 
+     return SUCCESS;
+}
+
+return_status receive_packet(mqd_t mq_type, Packet *Received)
+{
+    int status;
+    
+   if(mq_receive(mq_type,(char * )Received,sizeof(Packet),NULL) == ERROR)
+        {   
+            return ERROR;
+        }
+    return SUCCESS;        
+    
+}
 
