@@ -176,12 +176,25 @@ uint16_t apds9301_read_reg_2byte(uint8_t addr)
 @param		: 
 @return 	: lux
 */
-
-float calculateLuminosity(uint16_t Ch1, uint16_t Ch2)
+float getLuminosity()
 {
-	float lux;
-	float ratio_ch2_ch1;
+
+	static float lux;
+	uint16_t Ch1= 0, Ch2 =0;
+	uint16_t data1, data0;
+
+	apds9301_write_reg(APDS9301_REG_TIMING,(APDS9301_REG_TIMING_GAIN | APDS9301_REG_TIMING_INTEG(0x00)));
 	
+	Ch1 = apds9301_read_reg_2byte(APDS9301_REG_CMD_WORD | APDS9301_REG_DATA0_LOW);
+	//usleep(100000);
+	Ch2 = apds9301_read_reg_2byte(APDS9301_REG_CMD_WORD | APDS9301_REG_DATA1_LOW);
+	lux = calculateLuminosity(Ch1,Ch2);
+}
+	//usleep(100000);
+	//printf("CH1 = %d , CH2 %d\n",Ch1,Ch2);
+float calculateLuminosity(uint16_t Ch1 , uint16_t Ch2)
+{
+		float ratio_ch2_ch1;
 	if(Ch1 != 0)
 		ratio_ch2_ch1= (float)Ch2/(float)Ch1;
 	else 
@@ -207,25 +220,7 @@ float calculateLuminosity(uint16_t Ch1, uint16_t Ch2)
 	{
 		lux = 0;
   }
-
-	return lux;
-}
-
-float getLuminosity()
-{
-
-	float lux = 0.0;
-	uint16_t Ch1= 0, Ch2 =0;
-	uint16_t data1, data0;
-
-	apds9301_write_reg(APDS9301_REG_TIMING,(APDS9301_REG_TIMING_GAIN | APDS9301_REG_TIMING_INTEG(0x00)));
-
-	Ch1 = apds9301_read_reg_2byte(APDS9301_REG_CMD_WORD | APDS9301_REG_DATA0_LOW);
-	
-	Ch2 = apds9301_read_reg_2byte(APDS9301_REG_CMD_WORD | APDS9301_REG_DATA1_LOW);
-	
-	lux = calculateLuminosity(Ch1, Ch2);
-	
+  //printf("LUX is %f\n",lux);
     return lux;
 }
 
@@ -234,9 +229,9 @@ float getLuminosity()
 @param		: 
 @return 	: day or night
 */
-light is_Day_or_Night()
+IsDay is_Day_or_Night(float lux)
 {
-	float lux = getLuminosity();
+	//float lux = getLuminosity();
 	if(lux > THRESHOLD_D_N)
 		return DAY;
 	else

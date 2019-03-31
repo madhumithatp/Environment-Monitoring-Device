@@ -17,6 +17,12 @@
 #include "driver_i2c.h"
 #include "signalhandler.h"
 #include "userled.h"
+#include "light_task.h"
+#include "temperature_task.h"
+#include "logger_task.h"
+#include "socket_task.h"
+#include "common.h"
+#include "posix_timer.h"
 
 #define MAX_MSG_SIZE    (30)
 

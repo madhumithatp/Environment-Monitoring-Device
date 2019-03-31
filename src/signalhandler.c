@@ -72,7 +72,7 @@ void signal_handler(int signal)
 			printf("Invalid signal.\n");
 			break;
 	}
-     kill_signal = 1;
+    log_exit_all();
     
 }
 

@@ -20,6 +20,7 @@
 #define MQ_LOG  "/msgqueue_log"
 
 #define Filename "log.txt"
+volatile sig_atomic_t kill_signal_logger;
 
 extern mqd_t mq_log;
 

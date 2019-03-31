@@ -27,6 +27,8 @@
 
 #define MQ_SOCKET               "/msgqueue_socket"
 
+
+volatile sig_atomic_t kill_signal_socket;
 typedef enum
 {
     REQUEST_TEMPERATURE_C = 1,
@@ -36,6 +38,7 @@ typedef enum
     REQUEST_DAY_OR_NIGHT = 5,
     REQUEST_EXIT = 8,
 } RequestType_t;
+
 
 typedef struct 
 {
@@ -62,5 +65,18 @@ int socket_task_init(int fd_serversoc);
  * 
  * @return void* 
  */
+
 void * socket_task();
+/**
+ * @brief  heartbeat response
+ * 
+ */
+void socket_response();
+
+/**
+ * @brief 
+ * 
+ */
+TxPacket socket_task_request_handler(RequestType_t request);
+
 #endif /* SOCKET_TASK_H_ */

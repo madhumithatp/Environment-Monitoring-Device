@@ -27,17 +27,31 @@ mqd_t temperature_task_mq_init()
 void temperature_task_timer_handler()
 {
     static int count = 0;
-    temperature = getTemperature(CELCIUS);
-    log_message(TYPE_DATA,TID_TEMPERATURE,"Current Temperature : %f",temperature);
+    recent_temperature = getTemperature(CELCIUS);
+    log_message(TYPE_DATA,TID_TEMPERATURE,"Current Temperature : %f",recent_temperature);
    // printf("Temperature Task Timer Handler Count : %d \t Temperature : %f\n",count++,temperature);
 }
-
+float latest_temperature(unit_temp unit)
+{
+    float temperature = recent_temperature;
+    switch(unit)
+	{
+		case CELCIUS:
+			return temperature;
+		case FARENHEIT:
+			return TMP_C_TO_F(temperature);
+		case KELVIN:
+			return TMP_C_TO_K(temperature);
+		default:
+			return temperature;
+	}
+}
 void temperature_task_response()
 {
     float temperature;
     Packet response;
 
-    while(kill_signal == 0)
+    while(kill_signal_temperature == 0)
     {
             memset(&response,0,sizeof(response));
 
@@ -98,7 +112,9 @@ void temperature_task_response()
                 
                 case TYPE_EXIT:
               //  send_packet(TYPE_EXIT,response.ID,TID_TEMPERATURE,"Exiting Temperature sensor\n");
-                log_message(TYPE_EXIT,TID_TEMPERATURE,"Task Exit request from ID = %d",response.ID);
+              //  log_message(TYPE_EXIT,TID_TEMPERATURE,"Task Exit request from ID = %d",response.ID);
+                printf("Exit received Temp\n");
+                kill_signal_temperature =1;
                 break;
 
             }
@@ -106,7 +122,9 @@ void temperature_task_response()
 
 
     }
+     printf("Exiting Temperature Task\n");
 }
+
 
 void* temperature_task()
 {
@@ -128,7 +146,8 @@ void* temperature_task()
         printf("Temperature Timer Started \n");
     
     temperature_task_response();
-    stop_posixtimer(temperature_timerID);
+    if (stop_posixtimer(temperature_timerID) == -1 );
+
     delete_posixtimer(temperature_timerID);
     mq_close(mq_temperature);
 

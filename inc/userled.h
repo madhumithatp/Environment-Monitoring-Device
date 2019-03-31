@@ -11,14 +11,16 @@
  */
 
 
+
+
 #ifndef USERLED_H
 #define USERLED_H
 #include <linux/gpio.h>
 #include <unistd.h>
 #include <fcntl.h>
 
-#define     OFF  0
-#define     ON   1
+#define     OFF  "0"
+#define     ON   "1"
 typedef enum
 {
 LED0 = 0,

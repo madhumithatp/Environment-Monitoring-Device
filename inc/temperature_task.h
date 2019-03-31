@@ -18,8 +18,8 @@
 #include "posix_timer.h"
 #define MQ_TEMPERATURE          "/msgqueue_temperature"
 
-
-volatile float temperature;
+volatile sig_atomic_t kill_signal_temperature;
+volatile float recent_temperature;
 
 /*
  * @brief initialize the queue
@@ -41,7 +41,12 @@ void temperature_task_timer_handler();
  */
 void* temperature_task();
 
+/**
+ * @brief 
+ * 
+ */
 
+float latest_temperature(unit_temp unit);
 
 
 #endif

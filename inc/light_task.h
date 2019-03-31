@@ -19,6 +19,8 @@
 
 #define MQ_LIGHT        "/msgqueue_light"
 
+volatile sig_atomic_t kill_signal_light;
+
 volatile float lux;
 
 /**

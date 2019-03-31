@@ -31,10 +31,15 @@ mqd_t light_task_mq_init()
 void light_task_timer_handler()
 {
     static int count = 0;
-    float lux;
+   
     lux = getLuminosity();
     log_message(TYPE_DATA,TID_LIGHT,"Current Luminance : %f \t",lux);
    // printf("Light Task Timer Handler Count : %d \t Lux : %f\n",count++,lux);
+}
+float latest_lux()
+{
+    float recent_lux = lux;
+    return lux;
 }
 
 void light_task_response()
@@ -44,7 +49,7 @@ void light_task_response()
     IsDay day_night;
     Packet response;
     memset(&response,0,sizeof(response));
-    while(kill_signal == 0)
+    while(kill_signal_light == 0)
     {
       
             memset(&response,0,sizeof(response));
@@ -90,8 +95,9 @@ void light_task_response()
                 break;
                 
                 case TYPE_EXIT:
-              //  send_packet(TYPE_EXIT,response.ID,TID_LIGHT,"Exiting LIGHT sensor\n");
-                log_message(TYPE_EXIT,TID_LIGHT,"Task Exit request from ID = %d",response.ID);
+                printf("LIght Exited Received\n");
+              //  log_message(TYPE_EXIT,TID_LIGHT,"Task Exit request from ID = %d",response.ID);
+              kill_signal_light=1;
                 break;
 
             }
@@ -99,6 +105,7 @@ void light_task_response()
 
        
     }
+    printf("Exiting Light Task\n");
 }
 
 void* light_task()
@@ -111,12 +118,6 @@ void* light_task()
 	{
 		if(apds9301_setup() != ERROR)
 		{
-            // while(count<10)
-            // {
-            //     light_task_timer_handler();
-            //     usleep(500);
-            // }
-
             if(create_posixtimer(&light_timerID,&light_task_timer_handler) == -1)
                 printf("Light Timer Create Error \n");
             else
@@ -129,13 +130,13 @@ void* light_task()
         else 
             printf("Light Setup failed \n");
 	 }
-     else
+    else
          printf("Light PowerOn Failed  \n");
      
-     light_task_response();
+    light_task_response();
 
-     stop_posixtimer(light_timerID);
-     delete_posixtimer(light_timerID);
-      mq_close(mq_light);
+    stop_posixtimer(light_timerID);
+    delete_posixtimer(light_timerID);
+    mq_close(mq_light);
 
 }

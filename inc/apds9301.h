@@ -129,6 +129,11 @@ IsDay is_Day_or_Night(float lux);
 */
 
 uint16_t apds9301_data_align(uint8_t addr,uint8_t value);
+/**
+ * @brief Calculate luminosity based on ch1 and ch2
+ * 
+ */
+float calculateLuminosity(uint16_t Ch1 , uint16_t Ch2);
 
 
 #endif /* APDS9301_H_ */

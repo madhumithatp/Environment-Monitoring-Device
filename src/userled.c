@@ -1,14 +1,20 @@
-/**
- * @file userled.c
- * @author sDeepesh Sonigra
- *          Madhumitha Tolakanahalli
- * @brief 
- * @version 0.1
- * @date 2019-03-30
- * @citation http://beaglebone.cameon.net/home/using-the-user-leds
- * @copyright Copyright (c) 2019
- * 
- */
+// /**
+//  * @file userled.c
+//  * @author sDeepesh Sonigra
+//  *          Madhumitha Tolakanahalli
+//  * @brief 
+//  * @version 0.1
+//  * @date 2019-03-30
+//  * @citation http://beaglebone.cameon.net/home/using-the-user-leds
+//  * @copyright Copyright (c) 2019
+//  * 
+//  */
+
+
+
+
+
+
 
 #include "userled.h"
 
@@ -42,10 +48,11 @@ int Led_init(UserLed_t num)
 
 int UserLed(UserLed_t num, int on_off)
 {
+    
     int fd_led;
     fd_led = Led_init(LED1);
     write(fd_led, on_off,1);
-    close(fd_led);
+   
 }
 
 

@@ -13,7 +13,7 @@
 #include "posix_timer.h"
 
 #define MQ_MAIN "/msgqueue_main"
-#define HB_LIMIT 	(10)
+#define HB_LIMIT 	(3)
 
 #define NUM_OF_THREADS 4
 
@@ -28,6 +28,7 @@ pthread_t threadID[NUM_OF_THREADS];
 timer_t hb_timerID;
 pthread_mutex_t hb_status;
 int heartbeat_count[NUM_OF_THREADS];
+volatile sig_atomic_t kill_signal_main;
 
 
 
@@ -58,7 +59,7 @@ void heartbeat_handler();
  * @brief hb check 
  * 
  */
-void main_task_response();
+int main_task_response();
 
 /**
  * @brief logging exits for all threads

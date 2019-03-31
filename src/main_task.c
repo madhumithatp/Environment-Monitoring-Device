@@ -74,10 +74,10 @@ if (pthread_cancel(threadID[i]))
 
 void heartbeat_handler()
 {
-	if(heartbeat_count[TID_LIGHT]<= HB_LIMIT && heartbeat_count[TID_TEMPERATURE]<=HB_LIMIT && heartbeat_count[TID_LOGGER]<=HB_LIMIT )
+	if(heartbeat_count[TID_LIGHT]<= HB_LIMIT && heartbeat_count[TID_TEMPERATURE]<=HB_LIMIT && heartbeat_count[TID_LOGGER]<=HB_LIMIT && heartbeat_count[TID_SOCKET]<=HB_LIMIT )
 	{
-		
-		
+		for (int i = 0 ; i<4 ; i++ )
+		printf("[heartbeat count of id %d is %d]\n",i,heartbeat_count[i]);
 		pthread_mutex_lock(&hb_status);
 		heartbeat_count[TID_LOGGER]++;
 		pthread_mutex_unlock(&hb_status);
@@ -101,20 +101,21 @@ void heartbeat_handler()
 		{
 			perror("Error Sending Light heartbeat");
 		}
-		// heartbeat_count[TID_SOCKET]++;
-		// if(send_packet(TYPE_HEARTBEAT,TID_SOCKET,TID_MAIN, "Heartbeat ") == ERROR)
-		// {
-		// 	perror("Error Sending Temperature heartbeat");
-		// }
+		heartbeat_count[TID_SOCKET]++;
+		if(send_packet(TYPE_HEARTBEAT,TID_SOCKET,TID_MAIN, "Heartbeat ") == ERROR)
+		{
+			perror("Error Sending Temperature heartbeat");
+		}
 
 	}
 	else
 	{
+	
 		printf("Heartbeat failed\n");
 		if(heartbeat_count[TID_LIGHT] > HB_LIMIT)
 		{
 			perror("Error Heartbeat Limit of light crossed ");
-			log_message(TYPE_HEARTBEAT,TID_LIGHT,"Light task inactive: Heartbeat Count over Limit\n");
+			log_message(TYPE_INFO,TID_LIGHT,"Light task inactive\n");
 		}
 		if(heartbeat_count[TID_LOGGER] > HB_LIMIT)
 		{
@@ -123,59 +124,48 @@ void heartbeat_handler()
 		if(heartbeat_count[TID_TEMPERATURE] > HB_LIMIT)
 		{
 			perror("Error Heartbeat Limit of temperature crossed ");
-			log_message(TYPE_HEARTBEAT,TID_TEMPERATURE,"Temperature task inactive: Heartbeat Count over Limit\n");
+			log_message(TYPE_INFO,TID_TEMPERATURE,"Temperature task inactive\n");
 		}
-		// if(heartbeat_count[TID_SOCKET] > HB_LIMIT)
-		// {
-		// 	perror("Error Heartbeat Limit of Socket crossed ");
-		// 	log_message(TYPE_HEARTBEAT,TID_SOCKET,"SOCKET task inactive: Heartbeat Count over Limit\n");
-		// }
+		if(heartbeat_count[TID_SOCKET] > HB_LIMIT)
+		{
+			perror("Error Heartbeat Limit of Socket crossed ");
+			log_message(TYPE_INFO,TID_SOCKET,"SOCKET task inactive:\n");
+		}
 
-		UserLed(LED1,ON);
-		 stop_posixtimer(hb_timerID);
+		 UserLed(LED1,ON);
+		printf("Led ON\n");
+		log_exit_all();
 		
-		 kill_signal = 1;
-
+		delete_posixtimer(hb_timerID);
+		
 	}	
 
 }
 
-void main_task_response()
+int main_task_response()
 {
 	 char * ID_TASK[5] = {"LOGGER", "LIGHT","TEMPERATURE","SOCKET", "MAIN"};
-	//int ret,prio,id;
 	Packet Heartbeat;
 	int id;
-	// struct timespec recv_timeout = {0};
+
 	int status;
-	while(kill_signal == 0)
+	while(kill_signal_main == 0)
 	{
 		memset(&Heartbeat,0,sizeof(Heartbeat));
-		//  clock_gettime(CLOCK_REALTIME, &recv_timeout);
-        // recv_timeout.tv_sec += 2;
-        // ret = mq_timedreceive(mq_main,(char*)&(Heartbeat),sizeof(Heartbeat),&prio,&recv_timeout);
+
 		if( receive_packet(mq_main,&Heartbeat) == ERROR)
 		{
 			perror("Error Receiving Heartbeat");
 			continue;
 		}
 		id= (int)Heartbeat.ID;
-		// if(ERROR == ret && ETIMEDOUT == errno)
-        // {
-		// 	perror("ERROR receiving in main");
-        //     continue;
-        // }
-        // if(ERROR == ret)
-        // {
-        //     perror("Error main task queue ");
-        //     continue;
-        // }
+	
 		  switch(Heartbeat.msg_type)
             {
                 case TYPE_HEARTBEAT:
 				{
-				//	printf("heartbeat received from %d\n",id);
-					send_packet(TYPE_INFO,TID_LOGGER, TID_MAIN,"Heartbeat Received Task ID",id);
+					//printf("heartbeat received from %d\n",id);
+					send_packet(TYPE_INFO,TID_LOGGER, TID_MAIN,"Heartbeat Received Task ID %d",id);
 					pthread_mutex_lock(&hb_status);
 					heartbeat_count[Heartbeat.ID] = 0;
 					pthread_mutex_unlock(&hb_status);
@@ -192,22 +182,33 @@ void main_task_response()
                 break;
                 
                 case TYPE_EXIT:
-              	  	log_message(TYPE_EXIT,TID_MAIN,"Task Exit request from ID = %d",id);
-					kill_signal = 1;
+					printf("Main received exit from logger\n");
+					sleep(1);
+              	  	//log_message(TYPE_EXIT,TID_MAIN,"Task Exit request from ID = %d",id);
+					kill_signal_main = 1;
+					
                 break;
 
             }
-    	}
-	 
+    } 
+		mq_close(mq_main);
+		printf("Main TAsk Exited\n");
+		return 0;
 }
 
 void log_exit_all()
 {
-	 char * ID_TASK[5] = {"LOGGER", "LIGHT","TEMPERATURE","SOCKET", "MAIN"};
-	for(int i =1; i<4;i++)
+	printf("Entered Exit\n");
+	// char * ID_TASK[5] = {"LOGGER", "LIGHT","TEMPERATURE","SOCKET", "MAIN"};
+	for(int i =3; i>= 0;i--)
 	{
 	printf("Exiting Tasks no %d\n",i);
-	log_message(TYPE_EXIT,TID_MAIN,"Exiting the Task ID:  %d\n",i);
+	log_message(TYPE_INFO,TID_MAIN,"Exiting the Task ID:  %d",i);
+	if(i != 3)
+	send_packet(TYPE_EXIT,i,TID_MAIN,"Exit");
+	else
+	kill_signal_socket = 1;
 	}
+    kill_signal_main = 1;
 }
 

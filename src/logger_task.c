@@ -44,13 +44,13 @@ void * logger_task()
 
     memset(&LogData, 0, sizeof(Packet));
 
-    while(kill_signal == 0)
+    while(kill_signal_logger == 0)
     {
         if(mq_receive(mq_log,(char * )&LogData,sizeof(LogData),NULL) == -1)
         {
             perror("Logger Queue Receive Error \n");
         }
-        //logfptr = fopen(Filename, "a");
+        
         switch(LogData.ID)
         {
             case TID_TEMPERATURE:
@@ -80,8 +80,11 @@ void * logger_task()
                         case TYPE_INFO:
                             getTime(logfptr); fprintf(logfptr,"[%s]\t[Main]\t\t%s \n",MsgType_label[LogData.msg_type],LogData.messagepacket.message_str); 
                         break;
+                        case TYPE_EXIT:
+                        send_packet(TYPE_EXIT,TID_MAIN,TID_LOGGER,"Exit");
+                        kill_signal_logger = 1;
                         default:
-                            getTime(logfptr);fprintf(logfptr,"[%s]\t [Main]\t\t%s\n else",MsgType_label[LogData.msg_type],LogData.messagepacket.message_str);
+                            getTime(logfptr);fprintf(logfptr,"[%s]\t [Main]\t\t%s\n ",MsgType_label[LogData.msg_type],LogData.messagepacket.message_str);
                         break;  
                     }
                     fclose(logfptr);
@@ -96,6 +99,7 @@ void * logger_task()
         }
         //fclose(logfptr);
     }
+     printf("Exiting logger Task\n");
     
     mq_close(mq_log);
 
