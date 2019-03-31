@@ -2,7 +2,6 @@ VPATH:=../src
 # Declaration of variables
 PLATFORM = BBG
 TARGET = client
-PATH=/home/deepesh/buildroot/buildroot/output/host/usr/bin:$PATH
 
 ifeq ($(PLATFORM),HOST)
         CC := gcc
@@ -26,7 +25,7 @@ build: $(OBJECTS)
 .PHONY:run
 run : build
 ifeq ($(PLATFORM),BBG)
-	/usr/bin/scp $(TARGET) root@192.168.0.2:/home/project01/$(TARGET)
+	scp $(TARGET) root@192.168.0.2:/home/project01/$(TARGET)
         #ssh -t root@192.168.0.2 "cd /home/project01/ && gdbserver localhost:4000 target"
 else
         ./$(TARGET)

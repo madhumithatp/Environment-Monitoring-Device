@@ -28,7 +28,7 @@ int print_options()
 
     scanf("%d", &option);
 
-    if(option >= 1 && option <= 6)
+    if((option >= 1) && (option < 7))
         return option;
     else
         printf("Wrong option entered! Please try again... \n");   
@@ -40,21 +40,14 @@ RequestType_t decode_user_option(int option)
 {
     switch(option)
     {
-        case 1: { return REQUEST_TEMPERATURE_C;}
-        break; 
-        case 2: { return REQUEST_TEMPERATURE_K;} 
-        break;
-        case 3: { return REQUEST_TEMPERATURE_F;} 
-        break;
-        case 4: { return REQUEST_LUMINOSITY;} 
-        break;
-        case 5: { return REQUEST_DAY_OR_NIGHT;} 
-        break;
-        case 6: { return REQUEST_EXIT;} 
-        break;
-        default:
-        break;
-    }   
+        case 1: { return REQUEST_TEMPERATURE_C;} break;
+        case 2: { return REQUEST_TEMPERATURE_K;} break;
+        case 3: { return REQUEST_TEMPERATURE_F;} break;
+        case 4: { return REQUEST_LUMINOSITY;} break;
+        case 5: { return REQUEST_DAY_OR_NIGHT;} break;
+        case 6: { return REQUEST_EXIT;} break;
+        default : break;
+    }
 }
 void read_socket_packet(int fd, unsigned int len, void * buffer)
 {
@@ -84,7 +77,7 @@ int main()
 
     int flag = 1;
 
-    if(fd_clientsoc < 0)
+    if(fd_clientsoc == -1)
     {
         perror("ERROR : Client Socket Creation failed \n");
     }
@@ -97,7 +90,8 @@ int main()
     {
         perror("[Client Socket] inet failed \n");
     }
-  
+    while(flag)
+    {
         if(connect(fd_clientsoc,(struct sockaddr * )&ser_addr,sizeof(ser_addr)) == -1)
             perror("ERROR: Client Socket Connect Failed \n");
     
@@ -106,25 +100,22 @@ int main()
             /* Get user request,  create a packet and set to Server */
             option = print_options();
 
-          
-            memset(&buffer,0,sizeof(buffer));
-             memset(&packet_tx,0,sizeof(packet_tx));
-            packet_tx.RequestID = decode_user_option(option);
-
-            bytes = send(fd_clientsoc, (char *)&packet_tx,sizeof(packet_tx),0);
-
-              if(option == 6)
+            if(option == 6)
             {
-                //flag = 0;
+                flag = 0;
                 printf("Exiting Client Application");
                 close(fd_clientsoc);
                 break;
             }
+            memset(&buffer,0,sizeof(buffer));
+            packet_tx.RequestID = decode_user_option(option);
+
+            bytes = write(fd_clientsoc, (char *)&packet_tx,sizeof(packet_tx));
+
             if(bytes < sizeof(packet_tx))
                 perror(" ERROR : Client Socket : Complete data not sent \n");
 
             /* Get response from server */
-            memset(&packet_rx,0,sizeof(packet_rx));
             if(recv(fd_clientsoc,(char *) &packet_rx, sizeof(RxPacket),0) == -1)
                 perror("Client Receive error \n");
             else 
@@ -133,9 +124,7 @@ int main()
                 printf("CLient Received Value : %s",buffer);    
             }
         }
-    
-  
-    
+    }
 
     return 0;
 
