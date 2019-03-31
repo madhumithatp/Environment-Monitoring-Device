@@ -106,7 +106,7 @@ return_status send_packet( MsgType_t type,TID_t ID_to, TID_t ID_from,char* forma
              }
         break;
          case TID_SOCKET:
-             printf("Socket Case Send \n");
+                printf("Sending to socket  ID :%d %s\n",packet_log.ID,packet_log.messagepacket.message_str);
              if((mq_send(mq_socket,(char*)&packet_log,sizeof(packet_log),0))== -1)
              {
                  perror("Error Sending Message Packet");

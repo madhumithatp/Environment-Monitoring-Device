@@ -40,7 +40,8 @@ void light_task_timer_handler()
 void light_task_response()
 {
     
-    float LIGHT;
+    float light_val;
+    IsDay day_night;
     Packet response;
     memset(&response,0,sizeof(response));
     while(kill_signal == 0)
@@ -64,8 +65,22 @@ void light_task_response()
                 break;
 
                 case TYPE_DATA:
-                LIGHT = getLuminosity();
-                send_packet(TYPE_DATA,response.ID,TID_LIGHT,"Current LIGHT is %f",LIGHT);
+                light_val = getLuminosity();
+                
+                 if(strcmp((response.messagepacket.message_str),"Lux") == 0)
+                    {
+                       
+                        send_packet(TYPE_INFO,response.ID,TID_LIGHT,"Lux Value is %f",light_val);
+                    }
+                    if(strcmp((response.messagepacket.message_str),"isday") == 0)
+                    {   
+                        day_night = is_Day_or_Night(light_val);
+                        if(day_night == DAY)
+                            send_packet(TYPE_INFO,response.ID,TID_LIGHT,"Day Time");
+                        else 
+                            send_packet(TYPE_INFO,response.ID,TID_LIGHT,"Night Time");
+                    }
+                
                 break;
 
                 case TYPE_INFO:

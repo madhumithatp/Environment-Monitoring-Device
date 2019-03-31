@@ -46,7 +46,7 @@
 #define APDS9301_REG_TIMING_INTEG(x)((uint8_t)(x) & 0x03)
 #define APDS9301_REG_TIMING_MAN(x)	(uint8_t)(x << 3) 
 
-#define THRESHOLD_D_N 				(100)
+#define THRESHOLD_D_N 				(20)
 
 
 /*Bits in IntERRORupt Register*/
@@ -56,7 +56,7 @@ typedef enum light
 {
 	DAY,
 	NIGHT,
-}light;
+}IsDay;
 /*
 @description: opens a file descriptor to I2C bus
 @return 	: returns a file desriptor
@@ -121,7 +121,7 @@ float getLuminosity();
 @praram		: 
 @return 	: day or night
 */
-light is_Day_or_Night();
+IsDay is_Day_or_Night(float lux);
 /*
 @description: align data in format 
 @praram		: addr and value

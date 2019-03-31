@@ -224,9 +224,9 @@ float getLuminosity()
 @param		: 
 @return 	: day or night
 */
-light is_Day_or_Night()
+IsDay is_Day_or_Night(float lux)
 {
-	float lux = getLuminosity();
+	//float lux = getLuminosity();
 	if(lux > THRESHOLD_D_N)
 		return DAY;
 	else

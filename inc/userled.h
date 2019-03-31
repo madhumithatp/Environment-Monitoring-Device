@@ -17,6 +17,8 @@
 #include <unistd.h>
 #include <fcntl.h>
 
+#define     OFF  0
+#define     ON   1
 typedef enum
 {
 LED0 = 0,
@@ -27,8 +29,7 @@ LED3 = 3
 
 
 
-#define     OFF  0
-#define     ON   1
+
 
 
 #define USERLED0_PIN			"/sys/class/gpio/gpio53/value"

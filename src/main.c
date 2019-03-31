@@ -7,11 +7,13 @@
 @citation	: https://elinux.org/Interfacing_with_I2C_Devices
 */
 
-#include"main.h"
+#include "main.h"
+#include "userled.h"
 
 int main(int argc, char **argv)
 {
-
+	
+	UserLed(LED1,OFF);
 	mq_main = main_task_init();
 	printf("Main task created\n");	
 	int status;
@@ -24,14 +26,14 @@ int main(int argc, char **argv)
 	{
 		perror("Error Creating Threads\n");
 	}
-
-	
 	signalhandlerInit(0X0F);
 	if(create_posixtimer(&hb_timerID,heartbeat_handler) == ERROR)
 	{
 		perror("Error Creating Timer");
 	}
 	start_posixtimer(hb_timerID, 5);
+	UserLed(LED1,ON);
+	printf("Led On\n");
 	sleep(6);
 	main_task_response();
 

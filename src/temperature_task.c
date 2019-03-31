@@ -58,11 +58,35 @@ void temperature_task_response()
                 break;
 
                 case TYPE_DATA:
-                temperature = getTemperature(CELCIUS);
-                printf("Sock req %f",temperature);
-                if(send_packet(TYPE_DATA,response.ID,TID_TEMPERATURE,"Temperature is %f",temperature) == ERROR)
-                    printf("Temprature Mqueue : Send Error \n");
-                else printf("Temprature Mqueue : success \n");
+                {
+                    temperature = getTemperature(CELCIUS);
+                    if(strcmp((response.messagepacket.message_str),"Celcius") == 0)
+                    {
+                        printf("Sending Celcius\n");
+                        send_packet(TYPE_INFO,response.ID,TID_TEMPERATURE,"Temperature is %f",temperature);
+                    }
+
+                    else if(strcmp((response.messagepacket.message_str),"Farenheit")== 0)
+                    {
+                       
+                        TMP_C_TO_F(temperature);
+                         printf("Sending Farenheit %f\n",temperature);
+                        send_packet(TYPE_INFO,response.ID,TID_TEMPERATURE,"Temperature is %f",temperature);
+                    }   
+                    
+                    else if(strcmp((response.messagepacket.message_str),"Kelvin") == 0)
+                    {
+                       
+                        TMP_C_TO_K(temperature);
+                         printf("Sending kelvin %f\n",temperature);
+                        send_packet(TYPE_INFO,response.ID,TID_TEMPERATURE,"Temperature is %f",temperature);
+                    }
+                    else 
+                    {
+                        printf("sendind default in celcius");
+                        send_packet(TYPE_INFO,response.ID,TID_TEMPERATURE,"Temperature is %f",temperature);  
+                    }
+                }
                 break;
 
                 case TYPE_INFO:

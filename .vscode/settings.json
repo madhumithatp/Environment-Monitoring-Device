@@ -12,6 +12,9 @@
         "client_task.h": "c",
         "common.h": "c",
         "tmp102.h": "c",
-        "main_task.h": "c"
+        "main_task.h": "c",
+        "driver_i2c.h": "c",
+        "signalhandler.h": "c",
+        "userled.h": "c"
     }
 }

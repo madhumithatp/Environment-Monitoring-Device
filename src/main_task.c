@@ -38,7 +38,7 @@ return_status create_threads()
 	perror("Light Task not created Error code :");
 	return ERROR;
 	}
-	status= pthread_create(&threadID[3],NULL,socket_task,(void *)&(MyThreads[3]));
+	status= pthread_create(&threadID[3],NULL,socket_task,(void *)&(MyThreads[1]));
 	if(status)
 	{
 	perror("Light Task not created Error code :");
@@ -101,8 +101,8 @@ void heartbeat_handler()
 		{
 			perror("Error Sending Light heartbeat");
 		}
-		//heartbeat_count[TID_SOCKET]++;
-		// if(send_packet(TYPE_HEARTBEAT,TID_SOCKET,TID_MAIN, "Heartbeat Count : %d",heartbeat_count[TID_SOCKET])== ERROR)
+		// heartbeat_count[TID_SOCKET]++;
+		// if(send_packet(TYPE_HEARTBEAT,TID_SOCKET,TID_MAIN, "Heartbeat ") == ERROR)
 		// {
 		// 	perror("Error Sending Temperature heartbeat");
 		// }
@@ -128,8 +128,10 @@ void heartbeat_handler()
 		// if(heartbeat_count[TID_SOCKET] > HB_LIMIT)
 		// {
 		// 	perror("Error Heartbeat Limit of Socket crossed ");
-		//	log_message(TYPE_HEARTBEAT,TID_SOCKET,"SOCKET task inactive: Heartbeat Count over Limit\n");
+		// 	log_message(TYPE_HEARTBEAT,TID_SOCKET,"SOCKET task inactive: Heartbeat Count over Limit\n");
 		// }
+
+		UserLed(LED1,ON);
 		 stop_posixtimer(hb_timerID);
 		
 		 kill_signal = 1;
@@ -172,8 +174,8 @@ void main_task_response()
             {
                 case TYPE_HEARTBEAT:
 				{
-					// /printf("heartbeat received from %d\n",id);
-					send_packet(TYPE_INFO,TID_LOGGER, TID_MAIN,"Heartbeat Received Task ID :%d \n",id);
+				//	printf("heartbeat received from %d\n",id);
+					send_packet(TYPE_INFO,TID_LOGGER, TID_MAIN,"Heartbeat Received Task ID",id);
 					pthread_mutex_lock(&hb_status);
 					heartbeat_count[Heartbeat.ID] = 0;
 					pthread_mutex_unlock(&hb_status);

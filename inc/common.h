@@ -16,6 +16,7 @@
 #include <mqueue.h>
 #include "driver_i2c.h"
 #include "signalhandler.h"
+#include "userled.h"
 
 #define MAX_MSG_SIZE    (30)
 
