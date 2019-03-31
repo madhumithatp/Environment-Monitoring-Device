@@ -7,11 +7,11 @@
         "timer.h": "c",
         "light_task.h": "c",
         "posix_timer.h": "c",
+        "socket_task.h": "c",
+        "main.h": "c",
+        "client_task.h": "c",
         "common.h": "c",
-        "driver_i2c.h": "c",
-        "stat.h": "c",
-        "i2c-dev.h": "c",
-        "signalhandler.h": "c",
-        "userled.h": "c"
+        "tmp102.h": "c",
+        "main_task.h": "c"
     }
 }

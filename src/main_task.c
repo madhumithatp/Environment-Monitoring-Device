@@ -38,6 +38,12 @@ return_status create_threads()
 	perror("Light Task not created Error code :");
 	return ERROR;
 	}
+	status= pthread_create(&threadID[3],NULL,socket_task,(void *)&(MyThreads[3]));
+	if(status)
+	{
+	perror("Light Task not created Error code :");
+	return ERROR;
+	}
     return SUCCESS;
 
 }
@@ -166,7 +172,7 @@ void main_task_response()
             {
                 case TYPE_HEARTBEAT:
 				{
-					printf("heartbeat received from %d\n",id);
+					// /printf("heartbeat received from %d\n",id);
 					send_packet(TYPE_INFO,TID_LOGGER, TID_MAIN,"Heartbeat Received Task ID :%d \n",id);
 					pthread_mutex_lock(&hb_status);
 					heartbeat_count[Heartbeat.ID] = 0;

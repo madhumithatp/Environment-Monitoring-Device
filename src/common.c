@@ -51,7 +51,7 @@ return_status log_message(MsgType_t type,TID_t ID,char* format, ...)
     va_start(args,format);
     vsprintf(packet_log.messagepacket.message_str,format,args);
     //printf("sizeof(messagepacket)%d \t sizeof(packet) %d",sizeof(packet_log.messagepacket),sizeof(packet_log));
-    printf("Message :%s\n",packet_log.messagepacket.message_str);
+    //printf("Message :%s\n",packet_log.messagepacket.message_str);
     va_end(args);
     packet_log.msg_type = type; 
     packet_log.ID       = ID;
@@ -106,6 +106,7 @@ return_status send_packet( MsgType_t type,TID_t ID_to, TID_t ID_from,char* forma
              }
         break;
          case TID_SOCKET:
+             printf("Socket Case Send \n");
              if((mq_send(mq_socket,(char*)&packet_log,sizeof(packet_log),0))== -1)
              {
                  perror("Error Sending Message Packet");
@@ -123,9 +124,9 @@ return_status receive_packet(mqd_t mq_type, Packet *Received)
     int status;
     
    if(mq_receive(mq_type,(char * )Received,sizeof(Packet),NULL) == ERROR)
-        {   
-            return ERROR;
-        }
+    {   
+        return ERROR;
+    }
     return SUCCESS;        
     
 }

@@ -8,13 +8,14 @@
 #include "light_task.h"
 #include "temperature_task.h"
 #include "logger_task.h"
+#include "socket_task.h"
 #include "common.h"
 #include "posix_timer.h"
 
 #define MQ_MAIN "/msgqueue_main"
 #define HB_LIMIT 	(10)
 
-#define NUM_OF_THREADS 3
+#define NUM_OF_THREADS 4
 
 
 typedef struct

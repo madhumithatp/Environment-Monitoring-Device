@@ -18,7 +18,6 @@ SOURCES = $(wildcard *.c)
 INCLUDES:=-I../inc/
 OBJECTS = $(SOURCES:.c=.o)
 LIBS= -lpthread -lrt -lm
-PATH=/home/deepesh/buildroot/buildroot/output/host/usr/bin:$PATH
 
 #main target
 build: $(OBJECTS)

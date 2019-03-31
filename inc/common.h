@@ -27,8 +27,6 @@ mqd_t mq_main;
 
 volatile sig_atomic_t kill_signal;
 
-
-
 typedef enum 
 {
     TYPE_DATA = 0,

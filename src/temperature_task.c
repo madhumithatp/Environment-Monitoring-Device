@@ -59,7 +59,10 @@ void temperature_task_response()
 
                 case TYPE_DATA:
                 temperature = getTemperature(CELCIUS);
-                send_packet(TYPE_DATA,response.ID,TID_TEMPERATURE,"Current Temperature is %f",temperature);
+                printf("Sock req %f",temperature);
+                if(send_packet(TYPE_DATA,response.ID,TID_TEMPERATURE,"Temperature is %f",temperature) == ERROR)
+                    printf("Temprature Mqueue : Send Error \n");
+                else printf("Temprature Mqueue : success \n");
                 break;
 
                 case TYPE_INFO:
