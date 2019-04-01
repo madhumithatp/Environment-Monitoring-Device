@@ -31,7 +31,7 @@ int log_packet(Packet packet_log)
         if((mq_send(mq_log,(char*)&packet_log,sizeof(packet_log),0))== -1)
         {
            // log_error("Error Sending Temperature PAcket\n");
-            perror("Error Sending Temperature Packet");
+            
             return -1;
 
         }
@@ -41,7 +41,7 @@ int log_packet(Packet packet_log)
         printf("mq_send(light) \n");
         if((mq_send(mq_log,(char*)&packet_log,sizeof(packet_log),0))== -1)
         {
-            perror("Error Sending Light Packet");
+            
             //log_error("Error 
            // Sending Light PAcket\n");
             return -1;
@@ -62,8 +62,7 @@ return_status log_message(MsgType_t type,TID_t ID,char* format, ...)
     packet_log.ID       = ID;
     if((mq_send(mq_log,(char*)&packet_log,sizeof(packet_log),0))== -1)
         {
-            perror("Error Sending Message Packet");
-            //log_error("Error Sending Light PAcket\n");  
+           
             return ERROR;
         }
     
@@ -84,7 +83,7 @@ return_status send_packet( MsgType_t type,TID_t ID_to, TID_t ID_from,char* forma
         case TID_MAIN:
              if((mq_send(mq_main,(char*)&packet_log,sizeof(packet_log),0))== -1)
              {
-                 perror("Error Sending Message Packet");
+            
                  return ERROR;
             }
         break;
@@ -92,29 +91,29 @@ return_status send_packet( MsgType_t type,TID_t ID_to, TID_t ID_from,char* forma
         case TID_TEMPERATURE:
              if((mq_send(mq_temperature,(char*)&packet_log,sizeof(packet_log),0))== -1)
              {
-                 perror("Error Sending Message Packet");
+                
                  return ERROR;
             }
         break;
         case TID_LIGHT:
              if((mq_send(mq_light,(char*)&packet_log,sizeof(packet_log),0))== -1)
              {
-                 perror("Error Sending Message Packet");
+                 
                  return ERROR;
              }
         break;
                 case TID_LOGGER:
              if((mq_send(mq_log,(char*)&packet_log,sizeof(packet_log),0))== -1)
              {
-                 perror("Error Sending Message Packet");
+                 
                  return ERROR;
              }
         break;
          case TID_SOCKET:
-           // printf("Message Type to socket %d ID: %d",packet_log.msg_type,packet_log.ID);
+           
              if((mq_send(mq_socket,(char*)&packet_log,sizeof(packet_log),0))== -1)
              {
-                 perror("Error Sending Message Packet");
+                 
                  return ERROR;
              }
         break;

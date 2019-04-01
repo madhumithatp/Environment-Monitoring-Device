@@ -7,7 +7,7 @@
  * @date 2019-03-29
  * 
  * @copyright Copyright (c) 2019
- * @citation https://stackoverflow.com/questions/666601/what-is-the-correct-way-of-reading-from-a-tcp-socket-in-c-c
+ * @citation https:tackoverflow.com/questions/666601/what-is-the-correct-way-of-reading-from-a-tcp-socket-in-c-c
  * 
  */
 
@@ -24,46 +24,44 @@ TxPacket socket_task_request_handler(RequestType_t request)
         case REQUEST_TEMPERATURE_C :
            temperature = latest_temperature(CELCIUS);
             sprintf(ret_packet.txdata, "Temperature is %f\n",temperature);
-            //send_packet(TYPE_DATA,TID_TEMPERATURE,TID_SOCKET,"Celcius");  
+            
             break;
         case REQUEST_TEMPERATURE_K :
              temperature = latest_temperature(KELVIN);
             sprintf(ret_packet.txdata, "Temperature is %f\n",temperature);
-            printf("sending to Client %s\n",ret_packet.txdata);
-            //send_packet(TYPE_DATA,TID_TEMPERATURE,TID_SOCKET,"Farenheit");
+           
             break;
         case REQUEST_TEMPERATURE_F :
              temperature = latest_temperature(FARENHEIT);
             sprintf(ret_packet.txdata, "Temperature is %f\n",temperature);
-            printf("sending to Client %s\n",ret_packet.txdata);
-             //   send_packet(TYPE_DATA,TID_TEMPERATURE,TID_SOCKET,"Kelvin");
+            
             break;
         case REQUEST_LUMINOSITY :
             Socket = latest_lux();
             sprintf(ret_packet.txdata, "Lux is is %f\n",Socket);
-            //send_packet(TYPE_DATA,TID_Socket,TID_SOCKET,"Lux");
-             printf("sending to Client %s\n",ret_packet.txdata);
+            
+          
             break;
         case REQUEST_DAY_OR_NIGHT :
             Socket = latest_lux();
             if(is_Day_or_Night(Socket) == NIGHT)
             {
                  sprintf(ret_packet.txdata, "Night Time\n");
-                  printf("sending to Client %s\n",ret_packet.txdata);
+                
             }
             else
             {
                 sprintf(ret_packet.txdata, "Day Time\n");
-                 printf("sending to Client %s\n",ret_packet.txdata);
+                
             }
-           // send_packet(TYPE_DATA,TID_Socket,TID_SOCKET,"isday");
+           
         break;
         case REQUEST_EXIT :
             printf("End Connection");
 
         break;
         default :
-            printf("Socket Case : Invalid REequestID \n");
+          
         break;
     }
     return ret_packet;
@@ -85,14 +83,14 @@ void socket_response()
         {   
             perror("Error Receiving socket\n");
         }
-       printf("Packet Received on Socket Side TYPE : %d\t  ID:%d \n message: %s\n",response.msg_type,response.ID,response.messagepacket.message_str);
+       
             switch(response.msg_type)
             {
                 
                 case TYPE_HEARTBEAT:
                 {
                 send_packet(TYPE_HEARTBEAT,response.ID,TID_SOCKET,"Sending HeartBeat\n");
-                printf("sending heartbeat socket \n");
+               
                   if(create_posixtimer(&socket_timerID,&socket_task_timer_handler) == -1)
                     printf("Socket Timer Create Error \n");
                  else
@@ -105,11 +103,11 @@ void socket_response()
                 break;
 
                 case TYPE_DATA:
-                   //strcpy(ret_packet.txdata,response.messagepacket.message_str);
+                  
                 break;
 
                 case TYPE_INFO: 
-                  //  strcpy(ret_packet.txdata,response.messagepacket.message_str);
+                  
                 break;
 
                 case TYPE_ERROR:
@@ -118,7 +116,7 @@ void socket_response()
                 case TYPE_EXIT:
                 kill_signal_socket = 1;
                 delete_posixtimer(socket_timerID);
-               // log_message(TYPE_EXIT,TID_SOCKET,"Task Exit request from ID = %d",response.ID);
+                                                                        
                 break;
 
             }
@@ -159,7 +157,7 @@ int socket_task_init(int fd_serversoc)
     {
         perror("ERROR : Server Socket Option Set failed \n");
     }
-   // else printf("Server Socket Options Set successfully \n");
+   
 
     ser_addr.sin_family = AF_INET;
     ser_addr.sin_addr.s_addr = INADDR_ANY;
@@ -201,7 +199,7 @@ void * socket_task()
    
         if(listen(fd_serversoc,SOCKET_MAXCONN) == -1)
         {
-            perror("ERROR : Server Socket Listening failed\n");
+            printf("ERROR : Server Socket Listening failed\n");
         }
         else 
         {
@@ -227,11 +225,11 @@ void * socket_task()
         {   
             memset(&packet_rx,0,sizeof(packet_rx));
             bytesRead = recv(fd_clientsoc,(&packet_rx), sizeof(packet_rx),0);  
-            printf("Server Socket : Packet Received with ID %d\n",packet_rx.RequestID);
+           
             if(packet_rx.RequestID == REQUEST_EXIT)
             {
                 memset(&packet_rx,0,sizeof(packet_rx));
-               // fd_clientsoc = 0;
+               fd_clientsoc = 0;
                 break;
             }
             packet_tx = socket_task_request_handler(packet_rx.RequestID);

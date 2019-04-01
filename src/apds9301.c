@@ -182,12 +182,14 @@ uint16_t apds9301_read_reg_2byte(uint8_t addr)
 	addr = addr | APDS9301_REG_CMD_WORD;
 	if(write(fd, &addr,1) < 0)
 	{
+		log_exit_all();
 		perror("APDS9301 ERROR: Write fail file descriptor");
 		return ERROR;
 	}
 
 	if(read(fd, &buff,2) < 0)
 	{
+		log_exit_all();
 		perror("APDS9301 ERROR: read fail file descriptor");
 		return ERROR;
 	}

@@ -44,7 +44,7 @@ return_status create_threads()
 	{
 	perror("Light Task not created Error code :");
 	//return ERROR;
-	}
+	}	
     return SUCCESS;
 
 }
@@ -200,11 +200,10 @@ int main_task_response()
 
 void log_exit_all()
 {
-	printf("Entered Exit\n");
-	// char * ID_TASK[5] = {"LOGGER", "LIGHT","TEMPERATURE","SOCKET", "MAIN"};
+	//printf("Entered Exit\n");
 	for(int i =3; i>= 0;i--)
 	{
-	printf("Exiting Tasks no %d\n",i);
+	//printf("Exiting Tasks no %d\n",i);
 	log_message(TYPE_INFO,TID_MAIN,"Exiting the Task ID:  %d",i);
 	if(i != 3)
 	send_packet(TYPE_EXIT,i,TID_MAIN,"Exit");

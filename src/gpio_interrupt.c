@@ -67,7 +67,7 @@ int gpio_fd_open(unsigned int gpio)
 
     len = snprintf(buf, sizeof(buf), SYSFS_GPIO_DIR "/gpio%d/value", gpio);
 
-    fd = open(buf, O_RDONLY | O_NONBLOCK );
+    fd = open(buf, O_WRONLY);
     if (fd < 0) {
         perror("gpio/fd_open");
     }
@@ -79,6 +79,15 @@ int gpio_fd_write_on(unsigned int gpio)
     write(fd,"1",1);
     gpio_fd_close(fd);
 }
+
+int gpio_fd_write_off(unsigned int gpio)
+{
+    int fd = gpio_fd_open(gpio);
+    write(fd,"0",1);
+    gpio_fd_close(fd);
+
+}
+
 int gpio_fd_close(int fd)
 {
     return close(fd);
@@ -88,9 +97,10 @@ int gpio_init(int gpio)
 {
     int gpio_fd;
     gpio_export(gpio);
-    gpio_set_dir(gpio, 0);
-    gpio_set_edge(gpio, "rising");
+    gpio_set_dir(gpio, 1);
     gpio_fd = gpio_fd_open(gpio);
+    gpio_fd_write_off(gpio);
+    gpio_fd_close(gpio_fd);
 }
 
 Led_Init()

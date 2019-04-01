@@ -82,6 +82,13 @@ int gpio_fd_write_on(unsigned int gpio);
  * @return int 
  */
 
+/**
+ * @brief turn off led
+ * 
+ */
+
+int gpio_fd_write_off(unsigned int gpio);
+
 int gpio_fd_close(int fd);
 /**
  * @brief Construct a new Led_Init object

@@ -11,6 +11,7 @@
 
 
 #include "tmp102.h"
+#include "common.h"
 
 
 /*
@@ -25,6 +26,7 @@ int tmp102_open()
 	if(fd < 0)
 	{
 		perror("TMP 102 ERROR: open I2C bus");
+		
 		return ERROR;
 	}
 	if(ioctl(fd,I2C_SLAVE,TMP102_SLAVE_ADDR) < 0)
@@ -69,6 +71,7 @@ return_status tmp102_write_reg(uint8_t addr , uint16_t value)
 	fd = tmp102_open();
 	if(fd < 0)
 	{
+		
 		return ERROR;
 	}
 	/* Aligns Data with byte 0 = addr byte 1,2 = value */
@@ -77,8 +80,10 @@ return_status tmp102_write_reg(uint8_t addr , uint16_t value)
 	/*writes up to  sizeof(buff)-1 bytes from the buffer to the file descriptor*/
 	fd = write(fd,&buff,(sizeof(buff)-1));
 	if(fd == ERROR)
-	{
-		perror("TMP 102 ERROR: Write fail file descriptor TMP102");
+	{	
+		
+		printf("TMP 102 ERROR: Write fail file descriptor TMP102");
+		
 		return ERROR;
 	}
 	if(tmp102_close(fd) < 0)
@@ -102,13 +107,16 @@ uint16_t tmp102_read_reg(uint8_t addr)
 	}
 	if(write(fd, &addr,1)<0)
 	{
-		perror("TMP 102 ERROR: Write fail file descriptor");
+		
+		printf("TMP 102 ERROR: Write fail file descriptor");
+		log_exit_all();
 		return ERROR;
 	}
 
 	if(read(fd, &buff,2)<0)
 	{
-		perror("TMP 102 ERROR: read fail file descriptor");
+		printf("TMP 102 ERROR: read fail file descriptor");
+		log_exit_all();
 		return ERROR;
 	}
 	if(tmp102_close(fd) < 0 )
@@ -162,6 +170,7 @@ float getTemperature(unit_temp unit)
 {
 	uint16_t reg_value;
 	float temperature = 0.0; 
+
 
 	reg_value = tmp102_read_reg(TMP_REG_TEMPERATURE);
 	temperature = regval_to_tempC(reg_value);
