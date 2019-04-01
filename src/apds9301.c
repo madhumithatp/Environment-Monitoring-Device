@@ -192,9 +192,10 @@ float getLuminosity()
 }
 	//usleep(100000);
 	//printf("CH1 = %d , CH2 %d\n",Ch1,Ch2);
+
 float calculateLuminosity(uint16_t Ch1 , uint16_t Ch2)
 {
-		float ratio_ch2_ch1;
+		float ratio_ch2_ch1, lux;
 	if(Ch1 != 0)
 		ratio_ch2_ch1= (float)Ch2/(float)Ch1;
 	else 
