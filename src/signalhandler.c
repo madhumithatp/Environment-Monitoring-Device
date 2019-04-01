@@ -22,6 +22,10 @@
     sa.sa_sigaction = &signal_handler;
     sa.sa_flags = SA_SIGINFO;
 
+    struct sigaction sa1;
+    sa1.sa_sigaction = &signal_handler_pipe;
+    sa1.sa_flags = SA_SIGINFO;
+
     if(mask & USR1)
     {
         if (sigaction(SIGUSR1,&sa,NULL))
@@ -46,6 +50,15 @@
             perror("Error SIG init");
             // send message to log task
     }
+    
+    if (sigaction(SIGPIPE,&sa1,NULL))
+        perror("Error SIG init");
+        // send message to log task
+
+}
+
+void signal_handler_pipe(int signal)
+{
 
 }
 void signal_handler(int signal)

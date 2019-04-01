@@ -29,7 +29,7 @@ void temperature_task_timer_handler()
     static int count = 0;
     recent_temperature = getTemperature(CELCIUS);
     log_message(TYPE_DATA,TID_TEMPERATURE,"Current Temperature : %f",recent_temperature);
-   // printf("Temperature Task Timer Handler Count : %d \t Temperature : %f\n",count++,temperature);
+    printf("Temperature Task Timer Handler Count : %d \t Temperature : %f\n",count++,recent_temperature);
 }
 float latest_temperature(unit_temp unit)
 {
@@ -131,7 +131,6 @@ void* temperature_task()
 	int count = 0;
     timer_t temperature_timerID;
 	printf("Temp Task Entered\n");
-    mq_temperature=temperature_task_mq_init();
 	float temperature;
       
 

@@ -22,7 +22,6 @@
 #define Filename "log.txt"
 volatile sig_atomic_t kill_signal_logger;
 
-extern mqd_t mq_log;
 
 /**
  * @brief Initilaize arrtibutes for message queue

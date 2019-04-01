@@ -111,6 +111,27 @@ return_status apds9301_write_reg(uint8_t addr, uint8_t value)
 	return SUCCESS;
 }
 
+return_status apds9301_write_reg_2byte(uint8_t addr, uint16_t value)
+{
+	int fd;
+	uint32_t buff;
+	fd = apds9301_open();
+	if(fd < 0)
+	{
+		return ERROR;
+	}
+	buff = ((value <<8) | addr);
+	fd = write(fd,&buff,3);
+	if(fd == ERROR)
+	{
+		perror("APDS9301 ERROR: Write fail file descriptor APDS9301");
+		return ERROR;
+	}
+	if(apds9301_close(fd) == ERROR)
+		return ERROR;
+	return SUCCESS;
+}
+
 /*
 @description: read register of TMP102
 @param		: address of register
@@ -183,8 +204,6 @@ float getLuminosity()
 	uint16_t Ch1= 0, Ch2 =0;
 	uint16_t data1, data0;
 
-	apds9301_write_reg(APDS9301_REG_TIMING,(APDS9301_REG_TIMING_GAIN | APDS9301_REG_TIMING_INTEG(0x00)));
-	
 	Ch1 = apds9301_read_reg_2byte(APDS9301_REG_CMD_WORD | APDS9301_REG_DATA0_LOW);
 	//usleep(100000);
 	Ch2 = apds9301_read_reg_2byte(APDS9301_REG_CMD_WORD | APDS9301_REG_DATA1_LOW);
@@ -192,10 +211,10 @@ float getLuminosity()
 }
 	//usleep(100000);
 	//printf("CH1 = %d , CH2 %d\n",Ch1,Ch2);
-
 float calculateLuminosity(uint16_t Ch1 , uint16_t Ch2)
 {
-		float ratio_ch2_ch1, lux;
+	float lux = 0;
+		float ratio_ch2_ch1;
 	if(Ch1 != 0)
 		ratio_ch2_ch1= (float)Ch2/(float)Ch1;
 	else 

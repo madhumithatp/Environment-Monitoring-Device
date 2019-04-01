@@ -14,20 +14,31 @@ int main(int argc, char **argv)
 {
 	Led_init(LED1);
 	UserLed(LED1,OFF);
-	mq_main = main_task_init();
 	printf("Main task created\n");	
 	int status;
 	memset(&heartbeat_count,0,sizeof(heartbeat_count));
 	if(argc < 2 )
-	printf("Enter the Filename for logging data \n");
+		printf("No user input for logfile, using log.txt \n");
 	
 	pthread_mutex_init(&hb_status, NULL);
 
-	if(create_threads() == ERROR)
+	 /*Create Threads */
+	 if(built_in_startup_tests()!=SUCCESS)
 	{
-		perror("Error Creating Threads\n");
+		printf("BIST Failed. Exiting");
+		exit(1);
 	}
+    if(create_threads() == ERROR)
+	{
+		perror("Error Creating Threads, Exiting Program\n");
+        exit(1);
+	}
+    else printf("Threads created uccessfully \n");
+		
+	master_mqueue_init();
+
 	signalhandlerInit(0X0F);
+
 	if(create_posixtimer(&hb_timerID,heartbeat_handler) == ERROR)
 	{
 		perror("Error Creating Timer");

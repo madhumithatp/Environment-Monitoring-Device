@@ -19,6 +19,7 @@ int main_task_init()
 
 return_status create_threads()
 {
+	printf("entered create threads \n");
     int status;
     status= pthread_create(&threadID[2],NULL,logger_task,(void *)&(MyThreads[2]));
 	if(status)

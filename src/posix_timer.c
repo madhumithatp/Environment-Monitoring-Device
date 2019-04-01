@@ -47,6 +47,7 @@ int start_posixtimer(timer_t timerID, uint64_t sec)
     return (retval);
 }
 
+
 int stop_posixtimer(timer_t timerID)
 {
     int retval = 0;

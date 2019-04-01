@@ -40,7 +40,6 @@ void * logger_task()
     char* type;
     fclose(logfptr);
     Packet LogData;
-    mq_log = log_task_mq_init();
 
     memset(&LogData, 0, sizeof(Packet));
 

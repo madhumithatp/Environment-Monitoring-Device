@@ -18,7 +18,7 @@ TxPacket socket_task_request_handler(RequestType_t request)
     TxPacket ret_packet;
     Packet response;
     float temperature = 0;
-    float light = 0;
+    float Socket = 0;
     switch(request)
     {
         case REQUEST_TEMPERATURE_C :
@@ -39,14 +39,14 @@ TxPacket socket_task_request_handler(RequestType_t request)
              //   send_packet(TYPE_DATA,TID_TEMPERATURE,TID_SOCKET,"Kelvin");
             break;
         case REQUEST_LUMINOSITY :
-            light = latest_lux();
-            sprintf(ret_packet.txdata, "Lux is is %f\n",light);
-            //send_packet(TYPE_DATA,TID_LIGHT,TID_SOCKET,"Lux");
+            Socket = latest_lux();
+            sprintf(ret_packet.txdata, "Lux is is %f\n",Socket);
+            //send_packet(TYPE_DATA,TID_Socket,TID_SOCKET,"Lux");
              printf("sending to Client %s\n",ret_packet.txdata);
             break;
         case REQUEST_DAY_OR_NIGHT :
-            light = latest_lux();
-            if(is_Day_or_Night(light) == NIGHT)
+            Socket = latest_lux();
+            if(is_Day_or_Night(Socket) == NIGHT)
             {
                  sprintf(ret_packet.txdata, "Night Time\n");
                   printf("sending to Client %s\n",ret_packet.txdata);
@@ -56,7 +56,7 @@ TxPacket socket_task_request_handler(RequestType_t request)
                 sprintf(ret_packet.txdata, "Day Time\n");
                  printf("sending to Client %s\n",ret_packet.txdata);
             }
-           // send_packet(TYPE_DATA,TID_LIGHT,TID_SOCKET,"isday");
+           // send_packet(TYPE_DATA,TID_Socket,TID_SOCKET,"isday");
         break;
         case REQUEST_EXIT :
             printf("End Connection");
@@ -94,12 +94,12 @@ void socket_response()
                 send_packet(TYPE_HEARTBEAT,response.ID,TID_SOCKET,"Sending HeartBeat\n");
                 printf("sending heartbeat socket \n");
                   if(create_posixtimer(&socket_timerID,&socket_task_timer_handler) == -1)
-                printf("Light Timer Create Error \n");
+                    printf("Socket Timer Create Error \n");
                  else
-                 printf("Light Timer created \n");
+                 printf("Socket Timer created \n");
                 if(start_posixtimer(socket_timerID,5) == -1)
-                printf("Light Timer Start Error \n");
-                else printf("Light Timer Started \n");
+                printf("Socket Timer Start Error \n");
+                else printf("Socket Timer Started \n");
                 memset(&response,0,sizeof(response));
                 }
                 break;
@@ -150,7 +150,10 @@ int socket_task_init(int fd_serversoc)
     {
         perror("ERROR : Server Socket Creation failed \n");
     }
-  //  else printf("Server Socket created successfully \n");
+    else 
+    {   printf("Server Socket created successfully \n");
+        log_message(TYPE_INFO,TID_SOCKET,"Socket Created \n");
+    }
 
     if (setsockopt(fd_serversoc, SOL_SOCKET, SO_REUSEPORT | SO_REUSEADDR, &(options), sizeof(options)) == -1)
     {
@@ -165,6 +168,7 @@ int socket_task_init(int fd_serversoc)
     if(bind(fd_serversoc,(struct sockddr * )&ser_addr,sizeof(struct sockaddr_in)) == -1)
     {
         perror("ERROR : Server Socket Binding failed \n");
+        log_message(TYPE_INFO,TID_SOCKET,"Binding\n");
     }
   
     // printf("Server Socket Binding successful \n");
@@ -189,12 +193,9 @@ void * socket_task()
     size_t len = sizeof(packet_rx);
 
     printf("Socket Task Entered \n");
-      mq_socket = socket_task_mq_init();
     socket_response();
-     while(kill_signal_socket == 0)
+    while(kill_signal_socket == 0)
     {
-       
-    
         fd_serversoc = socket_task_init(fd_serversoc);
 
    
@@ -204,24 +205,29 @@ void * socket_task()
         }
         else 
         {
-        printf("Server Socket Listening \n");
+            printf("Server Socket Listening \n");
+            log_message(TYPE_INFO,TID_SOCKET,"Listening\n");
         }
         fd_clientsoc = accept(fd_serversoc,(struct sockaddr *)&cl_addr,(socklen_t*)&cl_addr_len); 
         if(fd_clientsoc == -1)
         {
             printf("ERROR: Server Socket Accept failed ERROR No. : %s\n",strerror(errno));
         }
-        else printf("Server Socket Accept successful \n");
-
+        else 
+        {      
+            printf("Server Socket Accept successful \n");
+            log_message(TYPE_INFO,TID_SOCKET,"Client Accepted Connection \n");
+        }
+        
         inet_ntop(AF_INET, &cl_addr.sin_addr, IPaddr_client, sizeof(IPaddr_client));
-        printf("[Server] Client Address : %s",IPaddr_client);
+        printf("[Server] Client Address : %s \n",IPaddr_client);
+        log_message(TYPE_INFO,TID_SOCKET,"Client IP %s \n",IPaddr_client);
 
        while(kill_signal_socket == 0)
         {   
             memset(&packet_rx,0,sizeof(packet_rx));
             bytesRead = recv(fd_clientsoc,(&packet_rx), sizeof(packet_rx),0);  
             printf("Server Socket : Packet Received with ID %d\n",packet_rx.RequestID);
-            
             if(packet_rx.RequestID == REQUEST_EXIT)
             {
                 memset(&packet_rx,0,sizeof(packet_rx));
@@ -237,7 +243,7 @@ void * socket_task()
 
     }
 
-   printf("Exiting socket\n");
+    printf("Exiting socket \n");
     close(fd_clientsoc);
     mq_close(mq_socket);
 

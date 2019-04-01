@@ -12,7 +12,14 @@
 #include <stdarg.h>
 #include "common.h"
 
-extern mqd_t mq_log;
+void master_mqueue_init()
+{
+    mq_main = main_task_init();
+    mq_log = log_task_mq_init();
+    mq_temperature = temperature_task_mq_init();
+    mq_light = light_task_mq_init();
+    mq_socket = socket_task_mq_init();
+}
 
 int log_packet(Packet packet_log)
 {

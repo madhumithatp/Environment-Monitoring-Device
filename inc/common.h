@@ -26,11 +26,11 @@
 
 #define MAX_MSG_SIZE    (30)
 
-mqd_t mq_log;           //Definitation of Mqueue descriptor
-mqd_t mq_temperature;
-mqd_t mq_light;
-mqd_t mq_socket;
-mqd_t mq_main;
+volatile mqd_t mq_log;           //Definitation of Mqueue descriptor
+volatile mqd_t mq_temperature;
+volatile mqd_t mq_light;
+volatile mqd_t mq_socket;
+volatile mqd_t mq_main;
 
 volatile sig_atomic_t kill_signal;
 
@@ -104,5 +104,11 @@ return_status send_packet( MsgType_t type,TID_t ID_to,TID_t ID_from,char* format
  * @return return_status 
  */
 return_status receive_packet(mqd_t mq_type, Packet *Received);
+
+/**
+ * @brief Inits all queues
+ * 
+ */
+void master_mqueue_init();
 
 #endif /* COMMON_H_ */

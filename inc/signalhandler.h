@@ -20,7 +20,7 @@ typedef enum
 
  void signal_handler(int signal);
 
-
+ void signal_handler_pipe(int signal);
 
 
 #endif

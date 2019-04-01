@@ -39,7 +39,8 @@ void light_task_timer_handler()
 float latest_lux()
 {
     float recent_lux = lux;
-    return lux;
+    printf(" LUX is %f\n",recent_lux);
+    return recent_lux;
 }
 
 void light_task_response()
@@ -114,24 +115,15 @@ void* light_task()
 	timer_t light_timerID;
 	printf("Light Task Entered\n");
     mq_light = light_task_mq_init();
-	if(apds9301_power_on()!= ERROR)
-	{
-		if(apds9301_setup() != ERROR)
-		{
-            if(create_posixtimer(&light_timerID,&light_task_timer_handler) == -1)
-                printf("Light Timer Create Error \n");
-            else
-                 printf("Light Timer created \n");
-            if(start_posixtimer(light_timerID,2) == -1)
-                printf("Light Timer Start Error \n");
-            else printf("Light Timer Started \n");
-		}	
-
-        else 
-            printf("Light Setup failed \n");
-	 }
+	
+    if(create_posixtimer(&light_timerID,&light_task_timer_handler) == -1)
+        printf("Light Timer Create Error \n");
     else
-         printf("Light PowerOn Failed  \n");
+            printf("Light Timer created \n");
+    if(start_posixtimer(light_timerID,2) == -1)
+        printf("Light Timer Start Error \n");
+    else printf("Light Timer Started \n");
+		
      
     light_task_response();
 
