@@ -46,17 +46,17 @@
 #define APDS9301_REG_TIMING_INTEG(x)((uint8_t)(x) & 0x03)
 #define APDS9301_REG_TIMING_MAN(x)	(uint8_t)(x << 3) 
 
-#define THRESHOLD_D_N 				(100)
+#define THRESHOLD_D_N 				(20)
 
 
-/*Bits in Interrupt Register*/
+/*Bits in IntERRORupt Register*/
 #define APDS9301_REG_INT_TH_INTR(x)	((x << 4) & 0x30)
 
 typedef enum light
 {
 	DAY,
 	NIGHT,
-}light;
+}IsDay;
 /*
 @description: opens a file descriptor to I2C bus
 @return 	: returns a file desriptor
@@ -110,6 +110,16 @@ uint8_t apds9301_read_reg_1byte(uint8_t addr);
 */
 uint16_t apds9301_read_reg_2byte(uint8_t addr);
 
+/**
+ * @brief 
+ * 
+ * @param addr 
+ * @param value 
+ * @return return_status 
+ */
+
+return_status apds9301_write_reg_2byte(uint8_t addr, uint16_t value);
+
 /*
 @description: get lux
 @praram		: 
@@ -121,7 +131,7 @@ float getLuminosity();
 @praram		: 
 @return 	: day or night
 */
-light is_Day_or_Night();
+IsDay is_Day_or_Night(float lux);
 /*
 @description: align data in format 
 @praram		: addr and value
@@ -129,6 +139,17 @@ light is_Day_or_Night();
 */
 
 uint16_t apds9301_data_align(uint8_t addr,uint8_t value);
+/**
+ * @brief Calculate luminosity based on ch1 and ch2
+ * 
+ */
+float calculateLuminosity(uint16_t Ch1 , uint16_t Ch2);
+
+/**
+ * @brief write 2 byte
+ * 
+ */
+
 
 
 #endif /* APDS9301_H_ */

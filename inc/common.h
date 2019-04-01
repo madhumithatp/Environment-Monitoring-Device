@@ -14,70 +14,62 @@
 #define COMMON_H_
 
 #include <mqueue.h>
-#include"logger_task.h"
+#include "driver_i2c.h"
+#include "signalhandler.h"
+#include "userled.h"
+#include "light_task.h"
+#include "temperature_task.h"
+#include "logger_task.h"
+#include "socket_task.h"
+#include "common.h"
+#include "posix_timer.h"
+#include "main.h"
 
-#define MAX_MSG_SIZE  (50)
+#define MAX_MSG_SIZE    (30)
+
+volatile mqd_t mq_log;           //Definitation of Mqueue descriptor
+volatile mqd_t mq_temperature;
+volatile mqd_t mq_light;
+volatile mqd_t mq_socket;
+volatile mqd_t mq_main;
+
+volatile sig_atomic_t kill_signal;
 
 typedef enum 
 {
-    MSGTYPE_SENSOR_DATA = 1,
-    MSGTYPE_SENSOR_STATUS = 2,
-    MSGTYPE_EXIT = 3,
+    TYPE_DATA = 0,
+    TYPE_INFO = 1,
+    TYPE_EXIT = 2,
+    TYPE_ERROR = 3,
+    TYPE_HEARTBEAT = 4
+    
 
 }MsgType_t;
 
-
+/**
+ * @brief
+ * 
+ */
 typedef enum 
 {
-    TID_MAIN = 1,
-    TID_LOGGER = 2,
-    TID_LIGHT = 3,
-    TID_TEMPERATURE = 4,
-    TID_SOCKET = 5,
-
+    
+    TID_LOGGER = 0,
+    TID_LIGHT = 1,
+    TID_TEMPERATURE = 2,
+    TID_SOCKET = 3,
+    TID_MAIN = 4,
 }TID_t;
 
-typedef enum
-{
-    HEARTBEAT,
-    ERROR,
-    STATUS,
-}LogType_t;
-
 typedef struct 
 {
-    MsgType_t msg_type;
-    TID_t ID;
-    float temperature;
-
-}TemperaturePacket_t;
-
-typedef struct 
-{
-    MsgType_t msg_type;
-    TID_t ID;
-    float lux;
-
-} LightPacket_t;
-
-typedef struct 
-{
-    LogType_t msg;
     char message_str[MAX_MSG_SIZE];
-
 }MessagePacket_t;
 
 typedef struct 
 {
+    MsgType_t msg_type;
     TID_t ID;
-    union
-    {
-        LightPacket_t lightpacket;
-        TemperaturePacket_t temperaturepacket;
-        MessagePacket_t messagepacket;
-
-    };
-    
+    MessagePacket_t messagepacket;
 }Packet;
 
 /**
@@ -89,10 +81,35 @@ typedef struct
 int log_packet(Packet packet_log);
 
 /**
- * @brief Send messages string to logger task 
+ * @brief logs messages to the logger task
+ * reference http://www.cplusplus.com/reference/cstdio/vsprintf/
+ * @param type 
+ * @param ID 
+ * @param format 
+ * @param ... 
+ * @return return_status 
+ */
+return_status log_message(MsgType_t type,TID_t ID,char * format, ...);
+/**
+ * @brief sending heartbeat
  * 
  */
+return_status send_packet( MsgType_t type,TID_t ID_to,TID_t ID_from,char* format, ...);
 
-int log_message(packet message, fmt, ...);
+/**
+ * 
+ * @brief receive heartbeat
+ * 
+ * @param mq_type 
+ * @param heartbeat 
+ * @return return_status 
+ */
+return_status receive_packet(mqd_t mq_type, Packet *Received);
+
+/**
+ * @brief Inits all queues
+ * 
+ */
+void master_mqueue_init();
 
 #endif /* COMMON_H_ */

@@ -20,6 +20,8 @@
 #include "temperature_task.h"
 #include "logger_task.h"
 #include "common.h"
+#include "main_task.h"
+#include "gpio_interrupt.h"
 
 
 #endif /* MAIN_H_*/

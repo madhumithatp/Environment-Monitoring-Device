@@ -15,12 +15,13 @@
 
 #include "common.h"
 #include "driver_i2c.h"
+#include"printtime.h"
 
 #define MQ_LOG  "/msgqueue_log"
 
 #define Filename "log.txt"
+volatile sig_atomic_t kill_signal_logger;
 
-mqd_t mq_log;
 
 /**
  * @brief Initilaize arrtibutes for message queue

@@ -15,8 +15,13 @@
 
 #include "common.h"
 #include "apds9301.h"
+#include "posix_timer.h"
 
 #define MQ_LIGHT        "/msgqueue_light"
+
+volatile sig_atomic_t kill_signal_light;
+
+volatile float lux;
 
 /**
  * @brief Function to initialize Light Message Queue
@@ -24,16 +29,6 @@
  * @return mqd_t 
  */
 mqd_t light_task_mq_init();
-
-
-/**
- * @brief 
- * Function to populate packets
- *  
- * @param msg_type 
- * @param lux 
- */
-Packet light_task_packet_create( MsgType_t msg_type, float lux);
 
 /**
  * @brief Timer Handler for light task

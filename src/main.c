@@ -7,59 +7,63 @@
 @citation	: https://elinux.org/Interfacing_with_I2C_Devices
 */
 
-#include"main.h"
-
-pthread_t threads1, threads2, threads3;
-
-typedef struct
-{
-	char *FileName;
-}StructThread;
+#include "main.h"
+#include "userled.h"
 
 int main(int argc, char **argv)
 {
-	StructThread MyThreads[3];
+	Led_Init();
+	gpio_fd_write_on(54);
 	printf("Main task created\n");	
-	FILE *fptr;
 	int status;
+	memset(&heartbeat_count,0,sizeof(heartbeat_count));
 	if(argc < 2 )
-	printf("Enter the Filename for logging data \n");
-	status= pthread_create(&threads3,NULL,logger_task,(void *)&(MyThreads[2]));
-	if(status)
-	{
-	perror("Log Task not created Error code :");
-	return 0;
-	}
+		{
+			printf("ERROR Invalid Arguments : Please Enter File name\n");
+			exit(1);
+		}
+	
+	pthread_mutex_init(&hb_status, NULL);
 
-	status= pthread_create(&threads1,NULL,temperature_task,(void *)&(MyThreads[0]));
-	if(status)
+	 /*Create Threads */
+	 if(built_in_startup_tests()!=SUCCESS)
 	{
-	perror("Temp Task not created Error code ");
-	return 0;
+		printf("BIST Failed. Exiting");
+		//userled(LED1,ON);
+		gpio_fd_write_on(54);
+		exit(1);
 	}
-	status= pthread_create(&threads2,NULL,light_task,(void *)&(MyThreads[1]));
-	if(status)
+	for(int i =0; i<NUM_OF_THREADS;i++)
+		MyThreads[i].FileName = argv[1];
+    if(create_threads() == ERROR)
 	{
-	perror("Light Task not created Error code :");
-	return 0;
+		perror("Error Creating Threads, Exiting Program\n");
+        exit(1);
 	}
-	status= pthread_join(threads3,NULL);
-	if(status)
+    else printf("Threads created uccessfully \n");
+		
+	master_mqueue_init();
+
+	signalhandlerInit(0X0F);
+
+	if(create_posixtimer(&hb_timerID,heartbeat_handler) == ERROR)
 	{
-	perror("log Task join error Error code");
-	return 0;
+		perror("Error Creating Timer");
 	}
-	status= pthread_join(threads1,NULL);
-	if(status)
+	start_posixtimer(hb_timerID, 5);
+
+	sleep(6);
+	main_task_response();
+	//delete_posixtimer(hb_timerID);
+	//mq_close(mq_main);
+
+	pthread_mutex_destroy(&hb_status);
+	delete_threads();
+	if(join_threads() == ERROR)
 	{
-	perror("Temp Task join error Error code :");
-	return 0;
+		perror("Error joining Threads\n");
 	}
-	status= pthread_join(threads2,NULL);
-	if(status)
-	{
-	perror("Light Task join error Error code");
-	return 0;
-	}
+	printf("EXITING PROGRAM\n");
+	exit(0);
 
 }

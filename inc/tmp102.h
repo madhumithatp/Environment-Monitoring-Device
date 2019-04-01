@@ -35,8 +35,8 @@
 #define	TMP_REG_THIGH 			(0x03)
 
 /*Unit Conversion Celcius to Kelvin and Farenheit*/
-#define TMP_C_TO_K(x)				(float)((x)+273)
-#define TMP_C_TO_F(x)				(float)(((x) * 1.8) + 32)
+#define TMP_C_TO_K(x)				(x= (float)((x)+273))
+#define TMP_C_TO_F(x)				(x= (float)(((x) * 1.8) + 32))
 
 /*Byte swap to interchange MSB and LSB*/
 #define SWAP_BYTES(num16)			(num16 = ((num16 << 8) & 0xFF00) | ((num16 >> 8 ) & 0x00FF))

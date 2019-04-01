@@ -21,12 +21,12 @@ int fd;
 
 	if(fd < 0)
 	{
-		perror("ERROR: open I2C bus");
+		perror("APDS9301 ERROR: open I2C bus");
 		return ERROR;
 	}
 	if(ioctl(fd,I2C_SLAVE,APDS9301_SLAVE_ADDR) < 0)
 	{
-		perror("ERROR: Open IOCTL");
+		perror("APDS9301 ERROR: Open IOCTL");
 		return ERROR;
 	}
 
@@ -42,7 +42,7 @@ int apds9301_close(int fd)
 {
 	if(close(fd) < 0)
 	{
-		perror("ERROR: Close File Descriptor");
+		perror("APDS9301 ERROR: Close File Descriptor");
 		return ERROR;
 	}
 	return SUCCESS;
@@ -55,11 +55,11 @@ int apds9301_close(int fd)
 return_status apds9301_setup()
 {
 	uint8_t data = apds9301_read_reg_1byte(APDS9301_REG_CTRL);
-	printf("Poweron setup %x\n",data);
+//	printf("Poweron setup %x\n",data);
 
 	if(apds9301_read_reg_1byte(APDS9301_REG_ID) != 0x50)
 	{
-		perror("ERROR: ID Read");
+		perror("APDS9301 ERROR: ID Read");
 		return ERROR;
 	}
 	return SUCCESS;
@@ -80,7 +80,7 @@ return_status apds9301_power_on()
 		return ERROR;
 	}
 	uint8_t data = apds9301_read_reg_1byte(APDS9301_REG_CTRL);
-	printf("Poweron read %x\n",data);
+	//printf("Poweron read %x\n",data);
 	return SUCCESS;
 }
 
@@ -103,11 +103,35 @@ return_status apds9301_write_reg(uint8_t addr, uint8_t value)
 	fd = write(fd,&buff,(sizeof(buff)));
 	if(fd == ERROR)
 	{
-		perror("ERROR: Write fail file descriptor APDS9301");
+		printf("APDS9301 ERROR: Write fail file descriptor APDS9301");
 		return ERROR;
 	}
 	if(apds9301_close(fd) == ERROR)
 		return ERROR;
+	return SUCCESS;
+}
+
+return_status apds9301_write_reg_2byte(uint8_t addr, uint16_t value)
+{
+	int fd;
+	uint32_t buff;
+	fd = apds9301_open();
+	if(fd < 0)
+	{
+		return ERROR;
+	}
+	buff = ((value <<8) | (addr | APDS9301_REG_CMD_WORD));
+	
+	fd = write(fd,&buff,3);
+
+	if(fd == ERROR)
+	{
+		printf("APDS9301 ERROR: Write fail file descriptor APDS9301");
+		return ERROR;
+	}
+	if(apds9301_close(fd) == ERROR)
+		return ERROR;
+
 	return SUCCESS;
 }
 
@@ -127,13 +151,13 @@ uint8_t apds9301_read_reg_1byte(uint8_t addr)
 	}
 	if(write(fd, &addr,sizeof(addr)) < 0)
 	{
-		perror("ERROR: Write fail file descriptor");
+		perror("APDS9301 ERROR: Write fail file descriptor");
 		return ERROR;
 	}
 
 	if(read(fd, &buff,sizeof(buff)) < 0)
 	{
-		perror("ERROR: read fail file descriptor");
+		perror("APDS9301 ERROR: read fail file descriptor");
 		return ERROR;
 	}
 	if(apds9301_close(fd) == ERROR)
@@ -155,15 +179,16 @@ uint16_t apds9301_read_reg_2byte(uint8_t addr)
 	{
 		return ERROR;
 	}
+	addr = addr | APDS9301_REG_CMD_WORD;
 	if(write(fd, &addr,1) < 0)
 	{
-		perror("ERROR: Write fail file descriptor");
+		perror("APDS9301 ERROR: Write fail file descriptor");
 		return ERROR;
 	}
 
 	if(read(fd, &buff,2) < 0)
 	{
-		perror("ERROR: read fail file descriptor");
+		perror("APDS9301 ERROR: read fail file descriptor");
 		return ERROR;
 	}
 	if(apds9301_close(fd) == ERROR)
@@ -179,17 +204,21 @@ uint16_t apds9301_read_reg_2byte(uint8_t addr)
 float getLuminosity()
 {
 
-	float lux = 0.0;
+	static float lux;
 	uint16_t Ch1= 0, Ch2 =0;
 	uint16_t data1, data0;
-	float ratio_ch2_ch1;
-	apds9301_write_reg(APDS9301_REG_TIMING,(APDS9301_REG_TIMING_GAIN | APDS9301_REG_TIMING_INTEG(0x00)));
-	
+
 	Ch1 = apds9301_read_reg_2byte(APDS9301_REG_CMD_WORD | APDS9301_REG_DATA0_LOW);
 	//usleep(100000);
 	Ch2 = apds9301_read_reg_2byte(APDS9301_REG_CMD_WORD | APDS9301_REG_DATA1_LOW);
+	lux = calculateLuminosity(Ch1,Ch2);
+}
 	//usleep(100000);
-	printf("CH1 = %d , CH2 %d\n",Ch1,Ch2);
+	//printf("CH1 = %d , CH2 %d\n",Ch1,Ch2);
+float calculateLuminosity(uint16_t Ch1 , uint16_t Ch2)
+{
+	float lux = 0;
+		float ratio_ch2_ch1;
 	if(Ch1 != 0)
 		ratio_ch2_ch1= (float)Ch2/(float)Ch1;
 	else 
@@ -214,8 +243,8 @@ float getLuminosity()
 	else if (ratio_ch2_ch1 > 1.30)
 	{
 		lux = 0;
-    }
-   printf("LUX is %f\n",lux);
+  }
+  //printf("LUX is %f\n",lux);
     return lux;
 }
 
@@ -224,9 +253,9 @@ float getLuminosity()
 @param		: 
 @return 	: day or night
 */
-light is_Day_or_Night()
+IsDay is_Day_or_Night(float lux)
 {
-	float lux = getLuminosity();
+	//float lux = getLuminosity();
 	if(lux > THRESHOLD_D_N)
 		return DAY;
 	else

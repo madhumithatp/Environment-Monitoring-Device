@@ -14,12 +14,12 @@
 #define TEMPERATURE_TASK_H
 
 #include "tmp102.h"
-#include"common.h"
+#include "common.h"
+#include "posix_timer.h"
+#define MQ_TEMPERATURE          "/msgqueue_temperature"
 
-#define MQ_TEMPERATURE       "/msgqueue_temperature"
-
-mqd_t mq_temperature;
-volatile float temperature;
+volatile sig_atomic_t kill_signal_temperature;
+volatile float recent_temperature;
 
 /*
  * @brief initialize the queue
@@ -29,14 +29,24 @@ volatile float temperature;
 mqd_t temperature_task_mq_init();
 
 /**
- * @brief populates Temperature Structure
+ * @brief Timer Handler for Temperature Sensor
  * 
  */
-Packet temperature_task_packet_create( MsgType_t msgtype, float temp);
 void temperature_task_timer_handler();
+
+/**
+ * @brief Thread Callback Function
+ * 
+ * @return void* 
+ */
 void* temperature_task();
 
+/**
+ * @brief 
+ * 
+ */
 
+float latest_temperature(unit_temp unit);
 
 
 #endif

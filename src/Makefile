@@ -13,7 +13,6 @@ endif
 
 CC_FLAGS = -w -g
 PATH=/home/deepesh/buildroot/buildroot/output/host/usr/bin:$PATH
-
 #file names 
 SOURCES = $(wildcard *.c)
 INCLUDES:=-I../inc/
@@ -26,7 +25,7 @@ build: $(OBJECTS)
 
 run : build
 ifeq ($(PLATFORM),BBG)
-	scp $(TARGET) root@192.168.0.2:/home/project01/$(TARGET)
+	/usr/bin/scp $(TARGET) root@192.168.0.2:/home/project01/$(TARGET)
         #ssh -t root@192.168.0.2 "cd /home/project01/ && gdbserver localhost:4000 target"
 else
         ./$(TARGET)
