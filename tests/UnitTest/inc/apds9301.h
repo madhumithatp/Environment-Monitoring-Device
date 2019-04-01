@@ -131,7 +131,7 @@ float calculateLuminosity(uint16_t Ch1, uint16_t Ch2);
 @param		: 
 @return 	: day or night
 */
-light is_Day_or_Night();
+light is_Day_or_Night(float lux);
 
 
 #endif /* APDS9301_H_ */

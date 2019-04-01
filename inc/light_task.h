@@ -44,4 +44,10 @@ void light_task_timer_handler();
  */
 void* light_task();
 
+/**
+ * @brief 
+ * 
+ */
+float latest_lux();
+
 #endif /* LIGHT_TASK_H_ */

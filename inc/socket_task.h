@@ -36,7 +36,7 @@ typedef enum
     REQUEST_TEMPERATURE_K = 3,
     REQUEST_LUMINOSITY = 4,
     REQUEST_DAY_OR_NIGHT = 5,
-    REQUEST_EXIT = 8,
+    REQUEST_EXIT = 6,
 } RequestType_t;
 
 

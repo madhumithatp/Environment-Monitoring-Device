@@ -33,6 +33,7 @@ void light_task_timer_handler()
     static int count = 0;
    
     lux = getLuminosity();
+    printf("Lux is %f\n",lux);
     log_message(TYPE_DATA,TID_LIGHT,"Current Luminance : %f \t",lux);
     
 }
@@ -40,7 +41,7 @@ float latest_lux()
 {
     float recent_lux = 0;
      recent_lux= lux;
-    printf("Lux at socket is %f",recent_lux);
+  //  printf("Lux at socket is %f",recent_lux);
     return recent_lux;
 }
 

@@ -214,6 +214,7 @@ float getLuminosity()
 	//usleep(100000);
 	Ch2 = apds9301_read_reg_2byte(APDS9301_REG_CMD_WORD | APDS9301_REG_DATA1_LOW);
 	lux = calculateLuminosity(Ch1,Ch2);
+	return lux;
 }
 	//usleep(100000);
 	//printf("CH1 = %d , CH2 %d\n",Ch1,Ch2);

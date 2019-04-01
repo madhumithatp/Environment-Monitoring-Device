@@ -36,6 +36,7 @@ void * logger_task(void *arg)
     char * MsgType_label[5]= {"DATA", "INFO","EXIT","ERROR, HEARTBEAT"};
     StructThread *Thread2ptr = (StructThread*)(arg);
     FILE * logfptr = fopen(Thread2ptr->FileName, "w");
+    char* Filename = Thread2ptr->FileName;
     getTime(logfptr);fprintf(logfptr, " [STATUS]\tLogger Task Entered \n");
     int8_t _msgtype = 0;
     char* type;

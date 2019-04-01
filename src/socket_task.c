@@ -228,7 +228,9 @@ void * socket_task()
            
             if(packet_rx.RequestID == REQUEST_EXIT)
             {
+                printf("Exit\n");
                 memset(&packet_rx,0,sizeof(packet_rx));
+                close(fd_clientsoc);
                fd_clientsoc = 0;
                 break;
             }

@@ -104,6 +104,12 @@ int main()
             {
                 flag = 0;
                 printf("Exiting Client Application");
+                memset(&buffer,0,sizeof(buffer));
+            packet_tx.RequestID = decode_user_option(option);
+                 bytes = write(fd_clientsoc, (char *)&packet_tx,sizeof(packet_tx));
+
+            if(bytes < sizeof(packet_tx))
+                perror(" ERROR : Client Socket : Complete data not sent \n");
                 close(fd_clientsoc);
                 break;
             }

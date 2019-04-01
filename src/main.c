@@ -13,7 +13,7 @@
 int main(int argc, char **argv)
 {
 	Led_Init();
-	gpio_fd_write_on(54);
+	
 	printf("Main task created\n");	
 	int status;
 	memset(&heartbeat_count,0,sizeof(heartbeat_count));

@@ -32,7 +32,7 @@ void unittest_regval_totempC()
 {
     uint16_t regval = 0x320;
     float temperature = regval_to_tempC(regval);
-    printf("\n - Regval %f",temperature);
+
     CU_ASSERT_EQUAL(temperature,3.125000);
 }
 
@@ -42,11 +42,11 @@ void unittest_getTemperature()
     float t_c = 0;
    
     t_k = TMP_C_TO_K(t);
-    printf("\n -temp in K %f",t_k);
+
     CU_ASSERT_EQUAL(t_k,(float)323.000000);
     
     t_f = TMP_C_TO_F(t);
-    printf("\n -temp in F %f",t_f);
+    
     CU_ASSERT_EQUAL(t_f,122.000000);
 
 }
@@ -56,7 +56,7 @@ void unittest_calculateLuminosity()
     float Ch0 = 3, Ch1 = 2, lux = 0;
     light val;
     lux = calculateLuminosity(Ch0, Ch1);
-    printf("lux %f",lux);
+   
     CU_ASSERT_EQUAL(lux,(float)0.007800);
 
     val = is_Day_or_Night(lux);

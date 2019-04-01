@@ -28,6 +28,7 @@ void temperature_task_timer_handler()
 {
     static int count = 0;
     recent_temperature = getTemperature(CELCIUS);
+    printf("Temperature is %f\n",recent_temperature);
     log_message(TYPE_DATA,TID_TEMPERATURE,"Current Temperature : %f",recent_temperature);
     
 }
