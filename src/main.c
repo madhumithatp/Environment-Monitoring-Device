@@ -7,56 +7,59 @@
 @citation	: https://elinux.org/Interfacing_with_I2C_Devices
 */
 
-#include "main.h"
-#include "userled.h"
+#include"main.h"
+
+pthread_t threads1, threads2, threads3;
+
+typedef struct
+{
+	char *FileName;
+}StructThread;
 
 int main(int argc, char **argv)
 {
-	Led_init(LED1);
-	UserLed(LED1,OFF);
+	StructThread MyThreads[3];
 	printf("Main task created\n");	
+	FILE *fptr;
 	int status;
-	memset(&heartbeat_count,0,sizeof(heartbeat_count));
 	if(argc < 2 )
-		printf("No user input for logfile, using log.txt \n");
-	
-	pthread_mutex_init(&hb_status, NULL);
-
-	 /*Create Threads */
-	 if(built_in_startup_tests()!=SUCCESS)
+	printf("Enter the Filename for logging data \n");
+	status= pthread_create(&threads3,NULL,logger_task,(void *)&(MyThreads[2]));
+	if(status)
 	{
-		printf("BIST Failed. Exiting");
-		exit(1);
+	perror("Log Task not created Error code :");
+	return 0;
 	}
-    if(create_threads() == ERROR)
+
+	status= pthread_create(&threads1,NULL,temperature_task,(void *)&(MyThreads[0]));
+	if(status)
 	{
-		perror("Error Creating Threads, Exiting Program\n");
-        exit(1);
+	perror("Temp Task not created Error code ");
+	return 0;
 	}
-    else printf("Threads created uccessfully \n");
-		
-	master_mqueue_init();
-
-	signalhandlerInit(0X0F);
-
-	if(create_posixtimer(&hb_timerID,heartbeat_handler) == ERROR)
+	status= pthread_create(&threads2,NULL,light_task,(void *)&(MyThreads[1]));
+	if(status)
 	{
-		perror("Error Creating Timer");
+	perror("Light Task not created Error code :");
+	return 0;
 	}
-	start_posixtimer(hb_timerID, 5);
-
-	sleep(6);
-	main_task_response();
-	//delete_posixtimer(hb_timerID);
-	//mq_close(mq_main);
-
-	pthread_mutex_destroy(&hb_status);
-	delete_threads();
-	if(join_threads() == ERROR)
+	status= pthread_join(threads3,NULL);
+	if(status)
 	{
-		perror("Error joining Threads\n");
+	perror("log Task join error Error code");
+	return 0;
 	}
-	printf("EXITING PROGRAM\n");
-	exit(0);
+	status= pthread_join(threads1,NULL);
+	if(status)
+	{
+	perror("Temp Task join error Error code :");
+	return 0;
+	}
+	status= pthread_join(threads2,NULL);
+	if(status)
+	{
+	perror("Light Task join error Error code");
+	return 0;
+	}
 
 }
